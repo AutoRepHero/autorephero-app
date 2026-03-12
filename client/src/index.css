@@ -1,16 +1,15 @@
-/* ============================================================
-   AutoRepHero Review Hub — Dark Command Center Design System
-   Design Philosophy: Field Operations UI / Tactical Utility
-   - Dark navy background for all-lighting readability
-   - Electric blue primary, gold for priority/accent
-   - Barlow Condensed for headers, DM Sans for body
-   - Glowing left-border cards, persistent bottom CTA
-   ============================================================ */
-
 @import "tailwindcss";
 @import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
+
+/* ============================================================
+   AUTOREPHERO REVIEW HUB — DARK COMMAND CENTER DESIGN SYSTEM
+   Design Movement: Tactical Dark / Field Operations UI
+   Core: Deep navy base, electric blue accents, gold priority
+   Typography: Space Grotesk (display) + Inter (body)
+   Mood: Masculine, authoritative, premium, battle-ready
+   ============================================================ */
 
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
@@ -36,53 +35,80 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
-  --color-gold: var(--gold);
-  --color-gold-dim: var(--gold-dim);
-  --color-success: var(--success);
-  --font-display: "Barlow Condensed", sans-serif;
-  --font-body: "DM Sans", sans-serif;
-  --font-mono: "JetBrains Mono", monospace;
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
 }
 
 :root {
-  /* Dark Command Center Palette */
-  --background: oklch(0.12 0.015 240);
-  --foreground: oklch(0.95 0.005 240);
-  --card: oklch(0.16 0.015 240);
-  --card-foreground: oklch(0.95 0.005 240);
-  --popover: oklch(0.16 0.015 240);
-  --popover-foreground: oklch(0.95 0.005 240);
+  --radius: 0.5rem;
+
+  /* Command Center Dark Palette */
+  --background: oklch(0.09 0.02 255);
+  --foreground: oklch(0.95 0.005 255);
+  --card: oklch(0.12 0.025 255);
+  --card-foreground: oklch(0.95 0.005 255);
+  --popover: oklch(0.11 0.02 255);
+  --popover-foreground: oklch(0.95 0.005 255);
 
   /* Electric Blue Primary */
-  --primary: oklch(0.62 0.22 250);
+  --primary: oklch(0.62 0.2 240);
   --primary-foreground: oklch(0.98 0 0);
 
   /* Muted Navy Secondary */
-  --secondary: oklch(0.20 0.015 240);
-  --secondary-foreground: oklch(0.75 0.01 240);
+  --secondary: oklch(0.16 0.03 255);
+  --secondary-foreground: oklch(0.85 0.01 255);
 
-  --muted: oklch(0.20 0.012 240);
-  --muted-foreground: oklch(0.55 0.015 240);
+  --muted: oklch(0.15 0.02 255);
+  --muted-foreground: oklch(0.55 0.02 255);
 
   /* Gold Accent */
-  --accent: oklch(0.78 0.15 80);
-  --accent-foreground: oklch(0.12 0.015 240);
+  --accent: oklch(0.75 0.15 80);
+  --accent-foreground: oklch(0.09 0.02 255);
 
-  /* Gold for priority indicators */
-  --gold: oklch(0.78 0.15 80);
-  --gold-dim: oklch(0.55 0.10 80);
-
-  /* Success Green */
-  --success: oklch(0.65 0.15 145);
-
-  --destructive: oklch(0.60 0.22 25);
+  --destructive: oklch(0.6 0.22 25);
   --destructive-foreground: oklch(0.98 0 0);
 
-  --border: oklch(1 0 0 / 0.08);
-  --input: oklch(1 0 0 / 0.10);
-  --ring: oklch(0.62 0.22 250);
+  --border: oklch(0.22 0.03 255);
+  --input: oklch(0.18 0.025 255);
+  --ring: oklch(0.62 0.2 240);
 
-  --radius: 0.5rem;
+  /* Charts */
+  --chart-1: oklch(0.62 0.2 240);
+  --chart-2: oklch(0.75 0.15 80);
+  --chart-3: oklch(0.55 0.18 160);
+  --chart-4: oklch(0.65 0.15 300);
+  --chart-5: oklch(0.7 0.18 200);
+
+  /* Sidebar */
+  --sidebar: oklch(0.08 0.02 255);
+  --sidebar-foreground: oklch(0.95 0.005 255);
+  --sidebar-primary: oklch(0.62 0.2 240);
+  --sidebar-primary-foreground: oklch(0.98 0 0);
+  --sidebar-accent: oklch(0.14 0.025 255);
+  --sidebar-accent-foreground: oklch(0.95 0.005 255);
+  --sidebar-border: oklch(0.2 0.03 255);
+  --sidebar-ring: oklch(0.62 0.2 240);
+
+  /* Custom tokens */
+  --gold: oklch(0.75 0.15 80);
+  --gold-dim: oklch(0.65 0.12 80);
+  --electric-blue: oklch(0.62 0.2 240);
+  --electric-blue-bright: oklch(0.7 0.22 240);
+  --navy-deep: oklch(0.09 0.02 255);
+  --navy-card: oklch(0.12 0.025 255);
+  --navy-elevated: oklch(0.16 0.03 255);
+  --success: oklch(0.65 0.18 145);
 }
 
 @layer base {
@@ -91,13 +117,13 @@
   }
   body {
     @apply bg-background text-foreground;
-    font-family: var(--font-body);
+    font-family: 'Inter', sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
   h1, h2, h3, h4, h5, h6 {
-    font-family: var(--font-display);
-    letter-spacing: 0.02em;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
   }
   button:not(:disabled),
   [role="button"]:not([aria-disabled="true"]),
@@ -116,7 +142,6 @@
     margin-right: auto;
     padding-left: 1rem;
     padding-right: 1rem;
-    max-width: 480px; /* Mobile-first max width */
   }
 
   .flex {
@@ -124,119 +149,241 @@
     min-width: 0;
   }
 
-  /* Priority glow border variants */
-  .priority-gold {
-    border-left: 3px solid oklch(0.78 0.15 80);
-    box-shadow: -4px 0 12px oklch(0.78 0.15 80 / 0.35);
+  @media (min-width: 640px) {
+    .container {
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
+    }
   }
 
-  .priority-blue {
-    border-left: 3px solid oklch(0.62 0.22 250);
-    box-shadow: -4px 0 12px oklch(0.62 0.22 250 / 0.30);
+  @media (min-width: 1024px) {
+    .container {
+      padding-left: 2rem;
+      padding-right: 2rem;
+      max-width: 480px;
+    }
   }
 
-  .priority-dim {
-    border-left: 3px solid oklch(1 0 0 / 0.15);
+  /* Command Center Card */
+  .cmd-card {
+    background: oklch(0.12 0.025 255);
+    border: 1px solid oklch(0.22 0.03 255);
+    border-radius: 0.75rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
   }
-
-  /* Glow button */
-  .btn-glow {
-    background: oklch(0.62 0.22 250);
-    box-shadow: 0 0 20px oklch(0.62 0.22 250 / 0.45), 0 4px 12px oklch(0 0 0 / 0.4);
-    transition: box-shadow 0.2s ease, transform 0.1s ease;
-  }
-
-  .btn-glow:hover {
-    box-shadow: 0 0 28px oklch(0.62 0.22 250 / 0.6), 0 4px 16px oklch(0 0 0 / 0.4);
-  }
-
-  .btn-glow:active {
-    transform: scale(0.97);
-    box-shadow: 0 0 14px oklch(0.62 0.22 250 / 0.4);
+  .cmd-card:hover {
+    border-color: oklch(0.35 0.08 255);
+    box-shadow: 0 0 20px oklch(0.62 0.2 240 / 0.1);
   }
 
   /* Gold glow button */
   .btn-gold {
-    background: oklch(0.78 0.15 80);
-    color: oklch(0.12 0.015 240);
-    box-shadow: 0 0 20px oklch(0.78 0.15 80 / 0.40), 0 4px 12px oklch(0 0 0 / 0.4);
-    transition: box-shadow 0.2s ease, transform 0.1s ease;
+    background: linear-gradient(135deg, oklch(0.75 0.15 80), oklch(0.65 0.12 80));
+    color: oklch(0.09 0.02 255);
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    border: none;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 20px oklch(0.75 0.15 80 / 0.3);
   }
-
+  .btn-gold:hover {
+    box-shadow: 0 6px 28px oklch(0.75 0.15 80 / 0.5);
+    transform: translateY(-1px);
+  }
   .btn-gold:active {
-    transform: scale(0.97);
+    transform: translateY(0);
   }
 
-  /* Section label style */
-  .section-label {
-    font-family: var(--font-display);
-    font-weight: 600;
-    font-size: 0.7rem;
-    letter-spacing: 0.12em;
+  /* Electric blue button */
+  .btn-electric {
+    background: linear-gradient(135deg, oklch(0.62 0.2 240), oklch(0.52 0.18 240));
+    color: white;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    border: none;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 20px oklch(0.62 0.2 240 / 0.3);
+  }
+  .btn-electric:hover {
+    box-shadow: 0 6px 28px oklch(0.62 0.2 240 / 0.5);
+    transform: translateY(-1px);
+  }
+
+  /* Platform card */
+  .platform-card {
+    background: oklch(0.12 0.025 255);
+    border: 1px solid oklch(0.22 0.03 255);
+    border-radius: 0.75rem;
+    transition: all 0.2s ease;
+    cursor: pointer;
+  }
+  .platform-card:hover {
+    border-color: oklch(0.62 0.2 240 / 0.6);
+    background: oklch(0.14 0.03 255);
+    box-shadow: 0 0 24px oklch(0.62 0.2 240 / 0.15);
+    transform: translateY(-2px);
+  }
+  .platform-card.priority {
+    border-color: oklch(0.75 0.15 80 / 0.7);
+    background: oklch(0.13 0.03 80);
+    box-shadow: 0 0 24px oklch(0.75 0.15 80 / 0.15);
+  }
+
+  /* Progress bar */
+  .progress-track {
+    background: oklch(0.18 0.025 255);
+    border-radius: 9999px;
+    overflow: hidden;
+  }
+  .progress-fill-blue {
+    background: linear-gradient(90deg, oklch(0.52 0.18 240), oklch(0.7 0.22 240));
+    border-radius: 9999px;
+    transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .progress-fill-gold {
+    background: linear-gradient(90deg, oklch(0.65 0.12 80), oklch(0.8 0.16 80));
+    border-radius: 9999px;
+    transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Glow text */
+  .text-gold {
+    color: oklch(0.75 0.15 80);
+  }
+  .text-electric {
+    color: oklch(0.7 0.22 240);
+  }
+
+  /* Badge */
+  .badge-priority {
+    background: oklch(0.75 0.15 80 / 0.15);
+    color: oklch(0.8 0.15 80);
+    border: 1px solid oklch(0.75 0.15 80 / 0.3);
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: oklch(0.55 0.015 240);
+    padding: 2px 8px;
+    border-radius: 9999px;
+  }
+  .badge-new {
+    background: oklch(0.62 0.2 240 / 0.15);
+    color: oklch(0.7 0.22 240);
+    border: 1px solid oklch(0.62 0.2 240 / 0.3);
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border-radius: 9999px;
   }
 
-  /* Mono text for AI output */
-  .mono-output {
-    font-family: var(--font-mono);
-    font-size: 0.875rem;
-    line-height: 1.6;
-    color: oklch(0.85 0.01 240);
+  /* Sheet overlay */
+  .sheet-overlay {
+    background: oklch(0.06 0.02 255 / 0.85);
+    backdrop-filter: blur(4px);
   }
 
-  /* Card base */
-  .review-card {
-    background: oklch(0.16 0.015 240);
-    border: 1px solid oklch(1 0 0 / 0.07);
+  /* Divider */
+  .cmd-divider {
+    border-color: oklch(0.22 0.03 255);
+  }
+
+  /* Input */
+  .cmd-input {
+    background: oklch(0.14 0.025 255);
+    border: 1px solid oklch(0.25 0.04 255);
+    color: oklch(0.95 0.005 255);
     border-radius: 0.5rem;
-    transition: background 0.15s ease, transform 0.1s ease;
+    padding: 0.625rem 0.875rem;
+    font-size: 0.875rem;
+    transition: border-color 0.2s;
+    width: 100%;
+  }
+  .cmd-input:focus {
+    outline: none;
+    border-color: oklch(0.62 0.2 240);
+    box-shadow: 0 0 0 3px oklch(0.62 0.2 240 / 0.15);
+  }
+  .cmd-input::placeholder {
+    color: oklch(0.45 0.02 255);
   }
 
-  .review-card:active {
-    transform: scale(0.985);
-    background: oklch(0.19 0.015 240);
+  /* Tab */
+  .cmd-tab {
+    color: oklch(0.55 0.02 255);
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 600;
+    font-size: 0.8rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding: 0.5rem 1rem;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+    cursor: pointer;
+  }
+  .cmd-tab.active {
+    color: oklch(0.7 0.22 240);
+    border-bottom-color: oklch(0.62 0.2 240);
   }
 
-  /* Pulse animation for top priority card */
-  @keyframes priority-pulse {
-    0%, 100% { box-shadow: -4px 0 12px oklch(0.78 0.15 80 / 0.35); }
-    50% { box-shadow: -4px 0 20px oklch(0.78 0.15 80 / 0.60); }
-  }
-
-  .priority-pulse {
-    animation: priority-pulse 2.5s ease-in-out infinite;
-  }
-
-  /* Slide up animation */
-  @keyframes slide-up {
-    from { transform: translateY(100%); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
-  }
-
-  .slide-up {
-    animation: slide-up 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-  }
-
-  /* Stagger fade in */
-  @keyframes fade-in-up {
-    from { transform: translateY(16px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
-  }
-
-  .fade-in-up {
-    animation: fade-in-up 0.35s ease forwards;
-  }
-
-  /* Scrollbar styling */
+  /* Scrollbar */
   ::-webkit-scrollbar {
     width: 4px;
   }
   ::-webkit-scrollbar-track {
-    background: transparent;
+    background: oklch(0.1 0.02 255);
   }
   ::-webkit-scrollbar-thumb {
-    background: oklch(1 0 0 / 0.15);
-    border-radius: 2px;
+    background: oklch(0.25 0.04 255);
+    border-radius: 9999px;
   }
+
+  /* Animations */
+  @keyframes pulse-gold {
+    0%, 100% { box-shadow: 0 0 0 0 oklch(0.75 0.15 80 / 0.4); }
+    50% { box-shadow: 0 0 0 8px oklch(0.75 0.15 80 / 0); }
+  }
+  @keyframes pulse-blue {
+    0%, 100% { box-shadow: 0 0 0 0 oklch(0.62 0.2 240 / 0.4); }
+    50% { box-shadow: 0 0 0 8px oklch(0.62 0.2 240 / 0); }
+  }
+  @keyframes slide-up {
+    from { transform: translateY(100%); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+  @keyframes fade-in {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes scale-in {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+  }
+  @keyframes star-pop {
+    0% { transform: scale(0) rotate(-20deg); opacity: 0; }
+    70% { transform: scale(1.2) rotate(5deg); }
+    100% { transform: scale(1) rotate(0deg); opacity: 1; }
+  }
+  @keyframes nfc-ring {
+    0% { transform: scale(1); opacity: 0.8; }
+    100% { transform: scale(2.5); opacity: 0; }
+  }
+
+  .animate-slide-up { animation: slide-up 0.35s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+  .animate-fade-in { animation: fade-in 0.3s ease forwards; }
+  .animate-scale-in { animation: scale-in 0.25s ease forwards; }
+  .animate-star-pop { animation: star-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+  .animate-nfc-ring { animation: nfc-ring 1.5s ease-out infinite; }
+  .animate-pulse-gold { animation: pulse-gold 2s ease-in-out infinite; }
+  .animate-pulse-blue { animation: pulse-blue 2s ease-in-out infinite; }
+
+  /* Stagger delays */
+  .delay-100 { animation-delay: 0.1s; }
+  .delay-200 { animation-delay: 0.2s; }
+  .delay-300 { animation-delay: 0.3s; }
+  .delay-400 { animation-delay: 0.4s; }
+  .delay-500 { animation-delay: 0.5s; }
 }
