@@ -46,10 +46,29 @@ function LeadModal({ open, onClose }: { open: boolean; onClose: () => void }) {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
-    // Simulate submission — replace with real endpoint (Formspree, EmailJS, or backend)
-    await new Promise(r => setTimeout(r, 1200));
-    setLoading(false);
-    setSubmitted(true);
+    try {
+      const res = await fetch("https://formspree.io/f/xvgaqlkb", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({
+          name: form.name,
+          business: form.business,
+          phone: form.phone,
+          email: form.email,
+          _replyto: form.email,
+          _subject: `New AutoRepHero Lead — ${form.business}`,
+        }),
+      });
+      if (res.ok) {
+        setSubmitted(true);
+      } else {
+        alert("Something went wrong. Please call us directly at (509) 818-0787.");
+      }
+    } catch {
+      alert("Network error. Please call us directly at (509) 818-0787.");
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
