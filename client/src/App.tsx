@@ -17,18 +17,14 @@ import LandingPage from "./pages/LandingPage";
 import ReviewLanding from "./pages/ReviewLanding";
 import Dashboard from "./pages/Dashboard";
 import SuccessPage from "./pages/SuccessPage";
-import CheckoutSuccess from "./pages/CheckoutSuccess";
-import Home from "./pages/Home";
+
 function Router() {
-  // make sure to consider if you need authentication for certain routes
   return (
     <Switch>
-      <Route path="/" component={Home} />
-      <Route path="/landing" component={LandingPage} />
+      <Route path="/" component={LandingPage} />
       <Route path="/review" component={ReviewLanding} />
       <Route path="/dashboard" component={Dashboard} />
       <Route path="/success" component={SuccessPage} />
-      <Route path="/checkout-success" component={CheckoutSuccess} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

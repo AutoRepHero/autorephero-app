@@ -17,8 +17,6 @@
    ============================================================ */
 import { useState } from "react";
 import { useLocation } from "wouter";
-import { trpc } from "@/lib/trpc";
-import { toast } from "sonner";
 import {
   Star, Zap, BarChart3, MessageSquare, Globe,
   ChevronDown, ChevronRight, Menu, X, Phone, Mail,
@@ -787,32 +785,6 @@ function NFCCards({ onGetStarted }: { onGetStarted: () => void }) {
 
 // ─── Pricing ──────────────────────────────────────────────────
 function Pricing({ onGetStarted }: { onGetStarted: () => void }) {
-  const createCheckout = trpc.stripe.createCheckoutSession.useMutation({
-    onSuccess: (data) => {
-      if (data.url) {
-        toast.info("Redirecting to secure checkout...");
-        window.open(data.url, "_blank");
-      }
-    },
-    onError: (err) => {
-      toast.error("Checkout error: " + err.message);
-    },
-  });
-
-  function handlePlanCTA(name: string, available: boolean) {
-    if (!available) {
-      onGetStarted(); // Join waitlist via lead modal
-      return;
-    }
-    if (name === "BOOTS ON THE GROUND") {
-      createCheckout.mutate({
-        productId: "boots_on_the_ground",
-        origin: window.location.origin,
-      });
-    } else {
-      onGetStarted();
-    }
-  }
   const plans = [
     {
       name: "BOOTS ON THE GROUND",
@@ -982,24 +954,17 @@ function Pricing({ onGetStarted }: { onGetStarted: () => void }) {
                 lineHeight: 1.55, marginBottom: "1.5rem",
               }}>{desc}</p>
 
-              <button
-                onClick={() => handlePlanCTA(name, available)}
-                disabled={createCheckout.isPending && name === "BOOTS ON THE GROUND"}
-                style={{
-                  width: "100%",
-                  fontFamily: "'Space Grotesk', sans-serif",
-                  fontSize: "0.8rem", fontWeight: 700, letterSpacing: "0.07em",
-                  padding: "0.8rem", borderRadius: 10,
-                  background: available ? "oklch(0.62 0.2 240)" : "transparent",
-                  border: available ? "none" : "1px solid oklch(0.3 0.04 255)",
-                  color: available ? "white" : "oklch(0.55 0.015 255)",
-                  cursor: createCheckout.isPending ? "wait" : "pointer",
-                  marginBottom: "1.5rem",
-                  boxShadow: available ? "0 0 20px oklch(0.62 0.2 240 / 0.3)" : "none",
-                  opacity: createCheckout.isPending && name === "BOOTS ON THE GROUND" ? 0.7 : 1,
-                }}>
-                {createCheckout.isPending && name === "BOOTS ON THE GROUND" ? "LOADING..." : cta}
-              </button>
+              <button onClick={onGetStarted} style={{
+                width: "100%",
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontSize: "0.8rem", fontWeight: 700, letterSpacing: "0.07em",
+                padding: "0.8rem", borderRadius: 10,
+                background: available ? "oklch(0.62 0.2 240)" : "transparent",
+                border: available ? "none" : "1px solid oklch(0.3 0.04 255)",
+                color: available ? "white" : "oklch(0.55 0.015 255)",
+                cursor: "pointer", marginBottom: "1.5rem",
+                boxShadow: available ? "0 0 20px oklch(0.62 0.2 240 / 0.3)" : "none",
+              }}>{cta}</button>
 
               <div style={{ borderTop: "1px solid oklch(0.2 0.03 255 / 0.4)", paddingTop: "1.25rem" }}>
                 {features.map(f => (
