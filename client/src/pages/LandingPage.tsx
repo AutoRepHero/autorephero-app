@@ -374,7 +374,7 @@ function Hero({ onGetStarted }: { onGetStarted: () => void }) {
               boxShadow: "0 0 30px oklch(0.62 0.2 240 / 0.35)",
               display: "flex", alignItems: "center", gap: 8,
             }}>
-              DEPLOY YOUR WEAPON <ArrowRight size={15} />
+              GET STARTED <ArrowRight size={15} />
             </button>
             <button onClick={() => scrollTo("#how-it-works")} style={{
               fontFamily: "'Space Grotesk', sans-serif",
@@ -791,7 +791,7 @@ function Pricing({ onGetStarted }: { onGetStarted: () => void }) {
       subtitle: "Starter",
       price: "$47",
       period: "/mo",
-      desc: "Your foot in the door. The point-of-service review capture weapon — deployed and operational.",
+      desc: "Boots on the ground. The point-of-service review capture weapon — deployed and operational.",
       features: [
         "Review Hub PWA (NFC + QR + link)",
         "Smart platform routing",
@@ -1205,7 +1205,7 @@ function FinalCTA({ onGetStarted }: { onGetStarted: () => void }) {
             boxShadow: "0 0 35px oklch(0.62 0.2 240 / 0.35)",
             display: "flex", alignItems: "center", gap: 8,
           }}>
-            DEPLOY MY WEAPON — FREE <ArrowRight size={15} />
+            GET STARTED — FREE <ArrowRight size={15} />
           </button>
           <a href={`tel:+15098180787`} style={{
             fontFamily: "'Space Grotesk', sans-serif",
