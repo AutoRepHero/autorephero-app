@@ -1,34 +1,179 @@
 /* ============================================================
    AUTOREPHERO.COM — Marketing Landing Page
    Design: Dark Command Center / Field Operations UI
-   Replaces: get.autorephero.com (GHL)
-   Sections:
-   - Nav (sticky)
-   - Hero (headline + CTA + hero image)
-   - Social proof stats bar
-   - Problem/Solution (The Gap)
-   - Review Hub feature (NFC card product)
-   - How It Works (3 steps)
-   - Full Platform Services
-   - Pricing tiers
-   - FAQ
-   - CTA footer
+   Phone: (509) 818-0787
+   Logo: ARHSheild.png (CDN)
+   Plans: Starter $47 | Core $297 (Coming Soon) | Otto (Coming Soon)
+   Changes v2:
+   - Custom ARH shield logo replaces all Shield icons
+   - Phone updated to (509) 818-0787
+   - Lead capture modal on all primary CTAs
+   - Starter renamed "Boots on the Ground" at $47
+   - Growth renamed "Core" at $297 (Coming Soon)
+   - Pro renamed "Otto" Automation (Coming Soon)
+   - NFC cards available for purchase section
+   - Feature sprawl reduced — roadmap moved to collapsible accordion
+   - 14-day trial only on Starter
    ============================================================ */
 import { useState } from "react";
 import { useLocation } from "wouter";
 import {
-  Star, Shield, Zap, BarChart3, MessageSquare, Globe,
+  Star, Zap, BarChart3, MessageSquare, Globe,
   ChevronDown, ChevronRight, Menu, X, Phone, Mail,
-  CheckCircle2, ArrowRight, Smartphone, QrCode, Wifi
+  CheckCircle2, ArrowRight, Smartphone, QrCode, Wifi,
+  Bot, Search, Share2, CreditCard
 } from "lucide-react";
 
-// ─── Asset URLs ───────────────────────────────────────────────
+// ─── Assets ───────────────────────────────────────────────────
+const ARH_LOGO = "https://d2xsxph8kpxj0f.cloudfront.net/310519663425645252/UzRYYiSF5sdvnoBygjnEgK/ARHSheild_2d3ca6e5.png";
 const HERO_BG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663425645252/UzRYYiSF5sdvnoBygjnEgK/aro-hero-bg-V7J9EVwURHxdGi3n9AhhTg.webp";
 const NFC_CARD = "https://d2xsxph8kpxj0f.cloudfront.net/310519663425645252/UzRYYiSF5sdvnoBygjnEgK/aro-nfc-card-MrAeQjbgLKk6dXWwdwJ78b.webp";
-const DASHBOARD_PREVIEW = "https://d2xsxph8kpxj0f.cloudfront.net/310519663425645252/UzRYYiSF5sdvnoBygjnEgK/aro-dashboard-preview-ci7KjNaaLMLe7Gbe8KQfCG.webp";
+const PHONE = "(509) 818-0787";
+const EMAIL = "info@autorephero.com";
+
+// ─── Lead Capture Modal ───────────────────────────────────────
+function LeadModal({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const [form, setForm] = useState({ name: "", business: "", phone: "", email: "" });
+  const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  if (!open) return null;
+
+  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+    setForm(f => ({ ...f, [e.target.name]: e.target.value }));
+  }
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setLoading(true);
+    // Simulate submission — replace with real endpoint (Formspree, EmailJS, or backend)
+    await new Promise(r => setTimeout(r, 1200));
+    setLoading(false);
+    setSubmitted(true);
+  }
+
+  return (
+    <div style={{
+      position: "fixed", inset: 0, zIndex: 200,
+      background: "oklch(0.05 0.01 240 / 0.85)",
+      backdropFilter: "blur(8px)",
+      display: "flex", alignItems: "center", justifyContent: "center",
+      padding: "1rem",
+    }} onClick={onClose}>
+      <div
+        onClick={e => e.stopPropagation()}
+        style={{
+          background: "oklch(0.12 0.02 240)",
+          border: "1px solid oklch(0.62 0.2 240 / 0.4)",
+          borderRadius: 18,
+          padding: "2.25rem",
+          width: "100%", maxWidth: 440,
+          boxShadow: "0 0 60px oklch(0.62 0.2 240 / 0.2)",
+          position: "relative",
+        }}>
+        <button onClick={onClose} style={{
+          position: "absolute", top: 16, right: 16,
+          background: "none", border: "none", cursor: "pointer",
+          color: "oklch(0.4 0.015 255)",
+        }}><X size={18} /></button>
+
+        {submitted ? (
+          <div style={{ textAlign: "center", padding: "1rem 0" }}>
+            <img src={ARH_LOGO} alt="AutoRepHero" style={{ width: 56, margin: "0 auto 1rem" }} />
+            <h3 style={{
+              fontFamily: "'Space Grotesk', sans-serif",
+              fontSize: "1.4rem", fontWeight: 800,
+              color: "oklch(0.95 0.005 255)", marginBottom: "0.75rem",
+            }}>Mission Received.</h3>
+            <p style={{
+              fontFamily: "'DM Sans', sans-serif",
+              fontSize: "0.9rem", color: "oklch(0.52 0.015 255)", lineHeight: 1.6,
+            }}>
+              We'll be in touch within one business day. Get ready to deploy your reputation weapon.
+            </p>
+          </div>
+        ) : (
+          <>
+            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: "1.5rem" }}>
+              <img src={ARH_LOGO} alt="AutoRepHero" style={{ width: 36 }} />
+              <div>
+                <h3 style={{
+                  fontFamily: "'Space Grotesk', sans-serif",
+                  fontSize: "1.1rem", fontWeight: 800,
+                  color: "oklch(0.95 0.005 255)", lineHeight: 1.2,
+                }}>Get Started with AutoRepHero</h3>
+                <p style={{
+                  fontFamily: "'DM Sans', sans-serif",
+                  fontSize: "0.75rem", color: "oklch(0.45 0.015 255)",
+                }}>We'll reach out within one business day.</p>
+              </div>
+            </div>
+
+            <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "0.85rem" }}>
+              {[
+                { name: "name", label: "YOUR NAME", placeholder: "First & Last Name", type: "text" },
+                { name: "business", label: "BUSINESS NAME", placeholder: "Joe's Auto Shop", type: "text" },
+                { name: "phone", label: "PHONE NUMBER", placeholder: "(509) 555-0100", type: "tel" },
+                { name: "email", label: "EMAIL ADDRESS", placeholder: "you@yourbusiness.com", type: "email" },
+              ].map(field => (
+                <div key={field.name}>
+                  <label style={{
+                    display: "block",
+                    fontFamily: "'Space Grotesk', sans-serif",
+                    fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.1em",
+                    color: "oklch(0.5 0.015 255)", marginBottom: "0.35rem",
+                  }}>{field.label}</label>
+                  <input
+                    required
+                    name={field.name}
+                    type={field.type}
+                    placeholder={field.placeholder}
+                    value={(form as any)[field.name]}
+                    onChange={handleChange}
+                    style={{
+                      width: "100%", boxSizing: "border-box",
+                      padding: "0.7rem 0.9rem",
+                      background: "oklch(0.09 0.015 240)",
+                      border: "1px solid oklch(0.25 0.03 255 / 0.6)",
+                      borderRadius: 9,
+                      fontFamily: "'DM Sans', sans-serif",
+                      fontSize: "0.88rem",
+                      color: "oklch(0.88 0.005 255)",
+                      outline: "none",
+                    }}
+                  />
+                </div>
+              ))}
+              <button
+                type="submit"
+                disabled={loading}
+                style={{
+                  marginTop: "0.5rem",
+                  fontFamily: "'Space Grotesk', sans-serif",
+                  fontSize: "0.82rem", fontWeight: 700, letterSpacing: "0.07em",
+                  padding: "0.85rem", borderRadius: 10,
+                  background: loading ? "oklch(0.45 0.12 240)" : "oklch(0.62 0.2 240)",
+                  border: "none", color: "white", cursor: loading ? "not-allowed" : "pointer",
+                  boxShadow: "0 0 24px oklch(0.62 0.2 240 / 0.3)",
+                  transition: "all 0.2s",
+                }}>
+                {loading ? "SENDING..." : "DEPLOY MY REPUTATION WEAPON →"}
+              </button>
+              <p style={{
+                fontFamily: "'DM Sans', sans-serif",
+                fontSize: "0.7rem", color: "oklch(0.38 0.015 255)",
+                textAlign: "center",
+              }}>No spam. No contracts. We protect your inbox like we protect your reputation.</p>
+            </form>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
 
 // ─── Nav ──────────────────────────────────────────────────────
-function Nav() {
+function Nav({ onGetStarted }: { onGetStarted: () => void }) {
   const [open, setOpen] = useState(false);
   const [, navigate] = useLocation();
 
@@ -47,7 +192,7 @@ function Nav() {
 
   return (
     <nav style={{
-      position: "sticky", top: 0, zIndex: 50,
+      position: "sticky", top: 0, zIndex: 100,
       background: "oklch(0.09 0.015 240 / 0.92)",
       backdropFilter: "blur(16px)",
       borderBottom: "1px solid oklch(0.22 0.03 255 / 0.5)",
@@ -57,14 +202,7 @@ function Nav() {
           {/* Logo */}
           <div style={{ display: "flex", alignItems: "center", gap: 10, cursor: "pointer" }}
             onClick={() => navigate("/")}>
-            <div style={{
-              width: 34, height: 34, borderRadius: 8,
-              background: "oklch(0.62 0.2 240 / 0.15)",
-              border: "1px solid oklch(0.62 0.2 240 / 0.4)",
-              display: "flex", alignItems: "center", justifyContent: "center",
-            }}>
-              <Shield size={17} style={{ color: "oklch(0.7 0.22 240)" }} />
-            </div>
+            <img src={ARH_LOGO} alt="AutoRepHero" style={{ width: 34, height: 34, objectFit: "contain" }} />
             <span style={{
               fontFamily: "'Space Grotesk', sans-serif",
               fontWeight: 800, fontSize: "1.05rem",
@@ -76,105 +214,72 @@ function Nav() {
           </div>
 
           {/* Desktop links */}
-          <div style={{ display: "flex", alignItems: "center", gap: 32 }}
-            className="hidden md:flex">
+          <div style={{ display: "flex", alignItems: "center", gap: 32 }} className="hidden md:flex">
             {links.map(l => (
               <button key={l.label} onClick={() => scrollTo(l.href)}
                 style={{
                   background: "none", border: "none", cursor: "pointer",
                   fontFamily: "'Space Grotesk', sans-serif",
-                  fontSize: "0.82rem", fontWeight: 600, letterSpacing: "0.06em",
-                  color: "oklch(0.55 0.015 255)",
-                  transition: "color 0.2s",
+                  fontSize: "0.78rem", fontWeight: 600, letterSpacing: "0.06em",
+                  color: "oklch(0.5 0.015 255)", transition: "color 0.2s",
                 }}
                 onMouseEnter={e => (e.currentTarget.style.color = "oklch(0.85 0.005 255)")}
-                onMouseLeave={e => (e.currentTarget.style.color = "oklch(0.55 0.015 255)")}>
+                onMouseLeave={e => (e.currentTarget.style.color = "oklch(0.5 0.015 255)")}>
                 {l.label.toUpperCase()}
               </button>
             ))}
           </div>
 
-          {/* Desktop CTA */}
+          {/* Desktop CTAs */}
           <div style={{ display: "flex", alignItems: "center", gap: 12 }} className="hidden md:flex">
-            <button
-              onClick={() => navigate("/review")}
-              style={{
-                fontFamily: "'Space Grotesk', sans-serif",
-                fontSize: "0.78rem", fontWeight: 700, letterSpacing: "0.06em",
-                padding: "0.5rem 1.1rem", borderRadius: 8,
-                background: "transparent",
-                border: "1px solid oklch(0.62 0.2 240 / 0.4)",
-                color: "oklch(0.7 0.22 240)", cursor: "pointer",
-                transition: "all 0.2s",
-              }}
-              onMouseEnter={e => { e.currentTarget.style.background = "oklch(0.62 0.2 240 / 0.1)"; }}
-              onMouseLeave={e => { e.currentTarget.style.background = "transparent"; }}>
-              DEMO APP
-            </button>
-            <button
-              onClick={() => scrollTo("#pricing")}
-              style={{
-                fontFamily: "'Space Grotesk', sans-serif",
-                fontSize: "0.78rem", fontWeight: 700, letterSpacing: "0.06em",
-                padding: "0.5rem 1.3rem", borderRadius: 8,
-                background: "oklch(0.62 0.2 240)",
-                border: "none", color: "white", cursor: "pointer",
-                transition: "all 0.2s",
-              }}
-              onMouseEnter={e => { e.currentTarget.style.background = "oklch(0.68 0.22 240)"; }}
-              onMouseLeave={e => { e.currentTarget.style.background = "oklch(0.62 0.2 240)"; }}>
-              GET STARTED
-            </button>
+            <button onClick={() => navigate("/review")} style={{
+              fontFamily: "'Space Grotesk', sans-serif",
+              fontSize: "0.75rem", fontWeight: 700, letterSpacing: "0.06em",
+              padding: "0.5rem 1.1rem", borderRadius: 8,
+              background: "transparent",
+              border: "1px solid oklch(0.62 0.2 240 / 0.4)",
+              color: "oklch(0.7 0.22 240)", cursor: "pointer", transition: "all 0.2s",
+            }}>DEMO APP</button>
+            <button onClick={onGetStarted} style={{
+              fontFamily: "'Space Grotesk', sans-serif",
+              fontSize: "0.75rem", fontWeight: 700, letterSpacing: "0.06em",
+              padding: "0.5rem 1.3rem", borderRadius: 8,
+              background: "oklch(0.62 0.2 240)",
+              border: "none", color: "white", cursor: "pointer", transition: "all 0.2s",
+            }}>GET STARTED</button>
           </div>
 
-          {/* Mobile menu toggle */}
           <button onClick={() => setOpen(!open)} className="md:hidden"
             style={{ background: "none", border: "none", color: "oklch(0.7 0.005 255)", cursor: "pointer" }}>
             {open ? <X size={22} /> : <Menu size={22} />}
           </button>
         </div>
 
-        {/* Mobile menu */}
         {open && (
-          <div style={{
-            borderTop: "1px solid oklch(0.22 0.03 255 / 0.5)",
-            padding: "1rem 0 1.5rem",
-          }}>
+          <div style={{ borderTop: "1px solid oklch(0.22 0.03 255 / 0.5)", padding: "1rem 0 1.5rem" }}>
             {links.map(l => (
-              <button key={l.label} onClick={() => scrollTo(l.href)}
-                style={{
-                  display: "block", width: "100%", textAlign: "left",
-                  background: "none", border: "none", cursor: "pointer",
-                  fontFamily: "'Space Grotesk', sans-serif",
-                  fontSize: "0.9rem", fontWeight: 600, letterSpacing: "0.05em",
-                  color: "oklch(0.65 0.015 255)",
-                  padding: "0.65rem 0",
-                }}>
-                {l.label.toUpperCase()}
-              </button>
+              <button key={l.label} onClick={() => scrollTo(l.href)} style={{
+                display: "block", width: "100%", textAlign: "left",
+                background: "none", border: "none", cursor: "pointer",
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontSize: "0.9rem", fontWeight: 600, letterSpacing: "0.05em",
+                color: "oklch(0.6 0.015 255)", padding: "0.65rem 0",
+              }}>{l.label.toUpperCase()}</button>
             ))}
             <div style={{ display: "flex", gap: 10, marginTop: "1rem" }}>
-              <button onClick={() => { setOpen(false); navigate("/review"); }}
-                style={{
-                  flex: 1, fontFamily: "'Space Grotesk', sans-serif",
-                  fontSize: "0.8rem", fontWeight: 700, letterSpacing: "0.05em",
-                  padding: "0.65rem", borderRadius: 8,
-                  background: "transparent",
-                  border: "1px solid oklch(0.62 0.2 240 / 0.4)",
-                  color: "oklch(0.7 0.22 240)", cursor: "pointer",
-                }}>
-                DEMO APP
-              </button>
-              <button onClick={() => { setOpen(false); scrollTo("#pricing"); }}
-                style={{
-                  flex: 1, fontFamily: "'Space Grotesk', sans-serif",
-                  fontSize: "0.8rem", fontWeight: 700, letterSpacing: "0.05em",
-                  padding: "0.65rem", borderRadius: 8,
-                  background: "oklch(0.62 0.2 240)",
-                  border: "none", color: "white", cursor: "pointer",
-                }}>
-                GET STARTED
-              </button>
+              <button onClick={() => { setOpen(false); navigate("/review"); }} style={{
+                flex: 1, fontFamily: "'Space Grotesk', sans-serif",
+                fontSize: "0.8rem", fontWeight: 700, letterSpacing: "0.05em",
+                padding: "0.65rem", borderRadius: 8,
+                background: "transparent", border: "1px solid oklch(0.62 0.2 240 / 0.4)",
+                color: "oklch(0.7 0.22 240)", cursor: "pointer",
+              }}>DEMO APP</button>
+              <button onClick={() => { setOpen(false); onGetStarted(); }} style={{
+                flex: 1, fontFamily: "'Space Grotesk', sans-serif",
+                fontSize: "0.8rem", fontWeight: 700, letterSpacing: "0.05em",
+                padding: "0.65rem", borderRadius: 8,
+                background: "oklch(0.62 0.2 240)", border: "none", color: "white", cursor: "pointer",
+              }}>GET STARTED</button>
             </div>
           </div>
         )}
@@ -184,26 +289,19 @@ function Nav() {
 }
 
 // ─── Hero ─────────────────────────────────────────────────────
-function Hero() {
+function Hero({ onGetStarted }: { onGetStarted: () => void }) {
   function scrollTo(href: string) {
     const el = document.querySelector(href);
     if (el) el.scrollIntoView({ behavior: "smooth" });
   }
 
   return (
-    <section style={{
-      position: "relative", overflow: "hidden",
-      minHeight: "90vh",
-      display: "flex", alignItems: "center",
-    }}>
-      {/* Background image */}
+    <section style={{ position: "relative", overflow: "hidden", minHeight: "90vh", display: "flex", alignItems: "center" }}>
       <div style={{
         position: "absolute", inset: 0,
         backgroundImage: `url(${HERO_BG})`,
-        backgroundSize: "cover", backgroundPosition: "center right",
-        opacity: 0.55,
+        backgroundSize: "cover", backgroundPosition: "center right", opacity: 0.5,
       }} />
-      {/* Gradient overlay */}
       <div style={{
         position: "absolute", inset: 0,
         background: "linear-gradient(105deg, oklch(0.08 0.015 240) 40%, oklch(0.08 0.015 240 / 0.5) 70%, transparent 100%)",
@@ -211,7 +309,6 @@ function Hero() {
 
       <div style={{ position: "relative", maxWidth: 1200, margin: "0 auto", padding: "6rem 1.5rem 5rem", width: "100%" }}>
         <div style={{ maxWidth: 620 }}>
-          {/* Badge */}
           <div style={{
             display: "inline-flex", alignItems: "center", gap: 7,
             padding: "0.35rem 0.9rem", borderRadius: 100,
@@ -219,15 +316,14 @@ function Hero() {
             border: "1px solid oklch(0.62 0.2 240 / 0.3)",
             marginBottom: "1.5rem",
           }}>
-            <Shield size={11} style={{ color: "oklch(0.7 0.22 240)" }} />
+            <img src={ARH_LOGO} alt="" style={{ width: 14, height: 14, objectFit: "contain" }} />
             <span style={{
               fontFamily: "'Space Grotesk', sans-serif",
-              fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.1em",
+              fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.1em",
               color: "oklch(0.7 0.22 240)",
             }}>REPUTATION MANAGEMENT · LOCAL SEO · AI AUTOMATION</span>
           </div>
 
-          {/* Headline */}
           <h1 style={{
             fontFamily: "'Space Grotesk', sans-serif",
             fontSize: "clamp(2.6rem, 6vw, 4.2rem)",
@@ -241,62 +337,40 @@ function Hero() {
             <span style={{ color: "oklch(0.78 0.15 80)" }}>Own Your Market.</span>
           </h1>
 
-          {/* Subhead */}
           <p style={{
             fontFamily: "'DM Sans', sans-serif",
             fontSize: "clamp(1rem, 2vw, 1.15rem)",
-            color: "oklch(0.62 0.015 255)",
-            lineHeight: 1.65,
-            marginBottom: "2.25rem",
-            maxWidth: 520,
+            color: "oklch(0.62 0.015 255)", lineHeight: 1.65,
+            marginBottom: "2.25rem", maxWidth: 520,
           }}>
-            AutoRepHero arms local businesses with the tools to collect more reviews, rank higher on Google, and convert reputation into revenue — without chasing customers or paying for ads.
+            AutoRepHero arms local businesses with the point-of-service review capture weapon — plus the AI automation and SEO tools to convert reputation into revenue.
           </p>
 
-          {/* CTAs */}
           <div style={{ display: "flex", flexWrap: "wrap", gap: 12, alignItems: "center" }}>
-            <button
-              onClick={() => scrollTo("#pricing")}
-              style={{
-                fontFamily: "'Space Grotesk', sans-serif",
-                fontSize: "0.85rem", fontWeight: 700, letterSpacing: "0.07em",
-                padding: "0.85rem 2rem", borderRadius: 10,
-                background: "oklch(0.62 0.2 240)",
-                border: "none", color: "white", cursor: "pointer",
-                boxShadow: "0 0 30px oklch(0.62 0.2 240 / 0.35)",
-                transition: "all 0.2s",
-                display: "flex", alignItems: "center", gap: 8,
-              }}>
-              GET STARTED FREE <ArrowRight size={15} />
+            <button onClick={onGetStarted} style={{
+              fontFamily: "'Space Grotesk', sans-serif",
+              fontSize: "0.85rem", fontWeight: 700, letterSpacing: "0.07em",
+              padding: "0.85rem 2rem", borderRadius: 10,
+              background: "oklch(0.62 0.2 240)", border: "none", color: "white", cursor: "pointer",
+              boxShadow: "0 0 30px oklch(0.62 0.2 240 / 0.35)",
+              display: "flex", alignItems: "center", gap: 8,
+            }}>
+              DEPLOY YOUR WEAPON <ArrowRight size={15} />
             </button>
-            <button
-              onClick={() => scrollTo("#how-it-works")}
-              style={{
-                fontFamily: "'Space Grotesk', sans-serif",
-                fontSize: "0.85rem", fontWeight: 700, letterSpacing: "0.07em",
-                padding: "0.85rem 1.75rem", borderRadius: 10,
-                background: "transparent",
-                border: "1px solid oklch(0.35 0.04 255)",
-                color: "oklch(0.7 0.015 255)", cursor: "pointer",
-                transition: "all 0.2s",
-              }}>
-              SEE HOW IT WORKS
-            </button>
+            <button onClick={() => scrollTo("#how-it-works")} style={{
+              fontFamily: "'Space Grotesk', sans-serif",
+              fontSize: "0.85rem", fontWeight: 700, letterSpacing: "0.07em",
+              padding: "0.85rem 1.75rem", borderRadius: 10,
+              background: "transparent", border: "1px solid oklch(0.35 0.04 255)",
+              color: "oklch(0.7 0.015 255)", cursor: "pointer",
+            }}>SEE HOW IT WORKS</button>
           </div>
 
-          {/* Trust signals */}
           <div style={{ display: "flex", flexWrap: "wrap", gap: "1rem 2rem", marginTop: "2.5rem" }}>
-            {[
-              "No contracts. Cancel anytime.",
-              "NFC + QR + SMS included",
-              "Works on any phone",
-            ].map(t => (
+            {["No contracts. Cancel anytime.", "NFC + QR + SMS included", "Works on any phone"].map(t => (
               <div key={t} style={{ display: "flex", alignItems: "center", gap: 6 }}>
                 <CheckCircle2 size={13} style={{ color: "oklch(0.7 0.18 145)", flexShrink: 0 }} />
-                <span style={{
-                  fontFamily: "'DM Sans', sans-serif",
-                  fontSize: "0.78rem", color: "oklch(0.5 0.015 255)",
-                }}>{t}</span>
+                <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "0.78rem", color: "oklch(0.5 0.015 255)" }}>{t}</span>
               </div>
             ))}
           </div>
@@ -324,23 +398,16 @@ function StatsBar() {
     }}>
       <div style={{
         maxWidth: 1200, margin: "0 auto",
-        display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
-        gap: "2rem",
+        display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "2rem",
       }}>
         {stats.map(({ value, label }) => (
           <div key={value} style={{ textAlign: "center" }}>
             <div style={{
               fontFamily: "'Space Grotesk', sans-serif",
               fontSize: "2.6rem", fontWeight: 800,
-              color: "oklch(0.78 0.15 80)",
-              letterSpacing: "-0.02em", lineHeight: 1,
-              marginBottom: "0.5rem",
+              color: "oklch(0.78 0.15 80)", letterSpacing: "-0.02em", lineHeight: 1, marginBottom: "0.5rem",
             }}>{value}</div>
-            <p style={{
-              fontFamily: "'DM Sans', sans-serif",
-              fontSize: "0.78rem", color: "oklch(0.45 0.015 255)",
-              lineHeight: 1.5,
-            }}>{label}</p>
+            <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "0.78rem", color: "oklch(0.45 0.015 255)", lineHeight: 1.5 }}>{label}</p>
           </div>
         ))}
       </div>
@@ -349,64 +416,57 @@ function StatsBar() {
 }
 
 // ─── Review Hub Feature ───────────────────────────────────────
-function ReviewHubFeature() {
+function ReviewHubFeature({ onGetStarted }: { onGetStarted: () => void }) {
   const [, navigate] = useLocation();
 
   const features = [
-    { icon: <Wifi size={16} />, title: "NFC Tap-to-Review", desc: "Customer taps your branded card. Review Hub opens instantly. No app download required." },
+    { icon: <Wifi size={16} />, title: "NFC Tap-to-Review", desc: "Customer taps your branded card. Review Hub opens instantly. No app download. No friction." },
     { icon: <QrCode size={16} />, title: "QR Code Fallback", desc: "Print QR codes for receipts, counter cards, or window stickers. Same app, same experience." },
     { icon: <Smartphone size={16} />, title: "Employee Phone Shortcut", desc: "Every employee has the app on their home screen. Hand the phone to the customer. Done in 60 seconds." },
-    { icon: <BarChart3 size={16} />, title: "Smart Platform Routing", desc: "The app automatically surfaces the platform that needs reviews most — balancing your reputation across Google, Yelp, Facebook, and BBB." },
-    { icon: <MessageSquare size={16} />, title: "AI Review Prompts", desc: "Customers see 5 AI-generated sentence starters tailored to your business. They copy one, write their review, and you get authentic, specific feedback." },
-    { icon: <Shield size={16} />, title: "Owner Dashboard", desc: "PIN-protected dashboard to manage platform priority, track progress toward review goals, and generate QR codes on demand." },
+    { icon: <BarChart3 size={16} />, title: "Smart Platform Routing", desc: "Automatically surfaces the platform that needs reviews most — balancing your reputation across Google, Yelp, Facebook, and BBB." },
+    { icon: <MessageSquare size={16} />, title: "AI Review Prompts", desc: "Five AI-generated sentence starters tailored to your business. Customers copy one, write their review, submit. Authentic. Specific. Fast." },
+    { icon: <Star size={16} />, title: "Owner Dashboard", desc: "PIN-protected dashboard to manage platform priority, track progress toward review goals, and generate QR codes on demand." },
   ];
 
   return (
     <section id="features" style={{ padding: "6rem 1.5rem" }}>
       <div style={{ maxWidth: 1200, margin: "0 auto" }}>
-        {/* Section header */}
         <div style={{ marginBottom: "4rem" }}>
           <div style={{
             display: "inline-flex", alignItems: "center", gap: 7,
             padding: "0.3rem 0.85rem", borderRadius: 100,
             background: "oklch(0.78 0.15 80 / 0.1)",
-            border: "1px solid oklch(0.78 0.15 80 / 0.25)",
-            marginBottom: "1rem",
+            border: "1px solid oklch(0.78 0.15 80 / 0.25)", marginBottom: "1rem",
           }}>
             <Star size={11} style={{ color: "oklch(0.78 0.15 80)" }} />
             <span style={{
               fontFamily: "'Space Grotesk', sans-serif",
               fontSize: "0.63rem", fontWeight: 700, letterSpacing: "0.1em",
               color: "oklch(0.78 0.15 80)",
-            }}>REVIEW HUB — THE FLAGSHIP PRODUCT</span>
+            }}>THE POINT-OF-SERVICE REVIEW CAPTURE WEAPON</span>
           </div>
           <h2 style={{
             fontFamily: "'Space Grotesk', sans-serif",
             fontSize: "clamp(1.9rem, 4vw, 2.8rem)",
             fontWeight: 800, lineHeight: 1.1,
-            color: "oklch(0.95 0.005 255)",
-            marginBottom: "1rem",
+            color: "oklch(0.95 0.005 255)", marginBottom: "1rem",
           }}>
             One Tap. Five Stars.<br />
             <span style={{ color: "oklch(0.7 0.22 240)" }}>Every Time.</span>
           </h2>
           <p style={{
             fontFamily: "'DM Sans', sans-serif",
-            fontSize: "1rem", color: "oklch(0.5 0.015 255)",
-            maxWidth: 540, lineHeight: 1.65,
+            fontSize: "1rem", color: "oklch(0.5 0.015 255)", maxWidth: 540, lineHeight: 1.65,
           }}>
-            The Review Hub is a mobile-first web app your customers access via NFC card tap, QR code scan, or a direct link. No app store. No friction. Just reviews.
+            The Review Hub opens instantly on any phone — NFC tap, QR scan, or direct link. No app store. No friction. No excuses.
           </p>
         </div>
 
-        {/* Two-column layout */}
         <div style={{
           display: "grid",
           gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
-          gap: "3rem",
-          alignItems: "center",
+          gap: "3rem", alignItems: "center",
         }}>
-          {/* Feature list */}
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.25rem" }}>
             {features.map(({ icon, title, desc }) => (
               <div key={title} style={{
@@ -414,7 +474,6 @@ function ReviewHubFeature() {
                 background: "oklch(0.12 0.02 240)",
                 border: "1px solid oklch(0.2 0.03 255 / 0.5)",
                 borderRadius: 12,
-                transition: "border-color 0.2s",
               }}>
                 <div style={{
                   width: 32, height: 32, borderRadius: 8,
@@ -422,43 +481,46 @@ function ReviewHubFeature() {
                   border: "1px solid oklch(0.62 0.2 240 / 0.25)",
                   display: "flex", alignItems: "center", justifyContent: "center",
                   color: "oklch(0.7 0.22 240)", marginBottom: "0.75rem",
-                }}>
-                  {icon}
-                </div>
+                }}>{icon}</div>
                 <h3 style={{
                   fontFamily: "'Space Grotesk', sans-serif",
                   fontSize: "0.85rem", fontWeight: 700,
-                  color: "oklch(0.88 0.005 255)",
-                  marginBottom: "0.35rem",
+                  color: "oklch(0.88 0.005 255)", marginBottom: "0.35rem",
                 }}>{title}</h3>
                 <p style={{
                   fontFamily: "'DM Sans', sans-serif",
-                  fontSize: "0.75rem", color: "oklch(0.45 0.015 255)",
-                  lineHeight: 1.55,
+                  fontSize: "0.75rem", color: "oklch(0.45 0.015 255)", lineHeight: 1.55,
                 }}>{desc}</p>
               </div>
             ))}
           </div>
 
-          {/* Product images */}
-          <div style={{ position: "relative", display: "flex", flexDirection: "column", gap: "1.5rem", alignItems: "center" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem", alignItems: "center" }}>
             <img src={NFC_CARD} alt="AutoRepHero NFC Card"
               style={{ width: "100%", maxWidth: 420, borderRadius: 16, boxShadow: "0 24px 80px oklch(0.62 0.2 240 / 0.2)" }} />
-            <button
-              onClick={() => navigate("/review")}
-              style={{
+            <div style={{ display: "flex", gap: 10, flexWrap: "wrap", justifyContent: "center" }}>
+              <button onClick={() => navigate("/review")} style={{
                 fontFamily: "'Space Grotesk', sans-serif",
-                fontSize: "0.8rem", fontWeight: 700, letterSpacing: "0.07em",
-                padding: "0.75rem 1.75rem", borderRadius: 10,
+                fontSize: "0.78rem", fontWeight: 700, letterSpacing: "0.07em",
+                padding: "0.7rem 1.5rem", borderRadius: 10,
                 background: "oklch(0.78 0.15 80 / 0.12)",
                 border: "1px solid oklch(0.78 0.15 80 / 0.35)",
                 color: "oklch(0.78 0.15 80)", cursor: "pointer",
                 display: "flex", alignItems: "center", gap: 8,
-                transition: "all 0.2s",
               }}>
-              <Zap size={14} />
-              TRY THE LIVE DEMO
-            </button>
+                <Zap size={14} /> TRY LIVE DEMO
+              </button>
+              <button onClick={onGetStarted} style={{
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontSize: "0.78rem", fontWeight: 700, letterSpacing: "0.07em",
+                padding: "0.7rem 1.5rem", borderRadius: 10,
+                background: "oklch(0.62 0.2 240)",
+                border: "none", color: "white", cursor: "pointer",
+                display: "flex", alignItems: "center", gap: 8,
+              }}>
+                <ArrowRight size={14} /> GET STARTED
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -470,22 +532,19 @@ function ReviewHubFeature() {
 function HowItWorks() {
   const steps = [
     {
-      n: "01",
-      title: "We Set You Up",
-      desc: "We configure your Review Hub with your platforms, review goals, and business keywords. You get a branded NFC card and QR code ready to deploy.",
+      n: "01", title: "We Deploy Your Hub",
+      desc: "We configure your Review Hub with your platforms, review goals, and business keywords. You get your NFC Starter Pack and QR assets ready to deploy.",
       detail: "Setup takes less than 24 hours. No technical knowledge required on your end.",
     },
     {
-      n: "02",
-      title: "Customer Taps or Scans",
+      n: "02", title: "Customer Taps or Scans",
       desc: "Your customer taps the NFC card or scans the QR code. The Review Hub opens on their phone — no app download, no login, no friction.",
       detail: "Works on iPhone 7+ and any Android with NFC. QR fallback works on every smartphone.",
     },
     {
-      n: "03",
-      title: "Reviews Flow In",
+      n: "03", title: "Reviews Flow In",
       desc: "Smart routing sends customers to the platform that needs reviews most. AI prompts help them write something specific and authentic in under 60 seconds.",
-      detail: "You watch your review count climb across Google, Yelp, Facebook, and BBB simultaneously.",
+      detail: "Watch your review count climb across Google, Yelp, Facebook, and BBB simultaneously.",
     },
   ];
 
@@ -501,8 +560,7 @@ function HowItWorks() {
             display: "inline-flex", alignItems: "center", gap: 7,
             padding: "0.3rem 0.85rem", borderRadius: 100,
             background: "oklch(0.62 0.2 240 / 0.1)",
-            border: "1px solid oklch(0.62 0.2 240 / 0.25)",
-            marginBottom: "1rem",
+            border: "1px solid oklch(0.62 0.2 240 / 0.25)", marginBottom: "1rem",
           }}>
             <Zap size={11} style={{ color: "oklch(0.7 0.22 240)" }} />
             <span style={{
@@ -514,37 +572,27 @@ function HowItWorks() {
           <h2 style={{
             fontFamily: "'Space Grotesk', sans-serif",
             fontSize: "clamp(1.9rem, 4vw, 2.8rem)",
-            fontWeight: 800, lineHeight: 1.1,
-            color: "oklch(0.95 0.005 255)",
+            fontWeight: 800, lineHeight: 1.1, color: "oklch(0.95 0.005 255)",
           }}>
             Simple Enough to Use.<br />
             <span style={{ color: "oklch(0.7 0.22 240)" }}>Powerful Enough to Scale.</span>
           </h2>
         </div>
 
-        <div style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-          gap: "2rem",
-        }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "2rem" }}>
           {steps.map(({ n, title, desc, detail }) => (
             <div key={n} style={{
               padding: "2rem",
               background: "oklch(0.12 0.02 240)",
               border: "1px solid oklch(0.2 0.03 255 / 0.5)",
-              borderRadius: 16,
-              position: "relative",
-              overflow: "hidden",
+              borderRadius: 16, position: "relative", overflow: "hidden",
             }}>
-              {/* Step number watermark */}
               <div style={{
                 position: "absolute", top: -10, right: 16,
                 fontFamily: "'Space Grotesk', sans-serif",
                 fontSize: "5rem", fontWeight: 900,
-                color: "oklch(0.62 0.2 240 / 0.06)",
-                lineHeight: 1, userSelect: "none",
+                color: "oklch(0.62 0.2 240 / 0.06)", lineHeight: 1, userSelect: "none",
               }}>{n}</div>
-
               <div style={{
                 fontFamily: "'Space Grotesk', sans-serif",
                 fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.1em",
@@ -553,8 +601,7 @@ function HowItWorks() {
               <h3 style={{
                 fontFamily: "'Space Grotesk', sans-serif",
                 fontSize: "1.25rem", fontWeight: 800,
-                color: "oklch(0.92 0.005 255)",
-                marginBottom: "0.75rem",
+                color: "oklch(0.92 0.005 255)", marginBottom: "0.75rem",
               }}>{title}</h3>
               <p style={{
                 fontFamily: "'DM Sans', sans-serif",
@@ -576,138 +623,139 @@ function HowItWorks() {
   );
 }
 
-// ─── Services ─────────────────────────────────────────────────
-function Services() {
-  const services = [
+// ─── NFC Cards Purchase ───────────────────────────────────────
+function NFCCards({ onGetStarted }: { onGetStarted: () => void }) {
+  const packs = [
     {
-      icon: <Star size={20} />,
-      title: "Review Hub",
-      tag: "LIVE NOW",
-      tagColor: "oklch(0.7 0.18 145)",
-      tagBg: "oklch(0.7 0.18 145 / 0.1)",
-      desc: "NFC + QR review collection with smart platform routing, AI prompts, and owner dashboard.",
+      name: "NFC Starter Pack",
+      price: "$97",
+      desc: "Your foot in the door. Branded NFC cards pre-programmed to your Review Hub, plus your QR code assets ready to print.",
+      includes: [
+        "10 branded NFC cards (NTAG213)",
+        "Pre-programmed to your Review Hub URL",
+        "Printable QR code asset pack",
+        "Counter card template (print-ready)",
+        "Employee setup guide",
+        "NFC Tools app walkthrough",
+      ],
+      highlight: false,
+      cta: "ORDER STARTER PACK",
     },
     {
-      icon: <MessageSquare size={20} />,
-      title: "SMS & Email Automation",
-      tag: "COMING SOON",
-      tagColor: "oklch(0.7 0.22 240)",
-      tagBg: "oklch(0.62 0.2 240 / 0.1)",
-      desc: "Timed review request sequences via Twilio SMS and SendGrid email. Set it and let it run.",
-    },
-    {
-      icon: <Globe size={20} />,
-      title: "Google Business Profile",
-      tag: "ROADMAP",
-      tagColor: "oklch(0.78 0.15 80)",
-      tagBg: "oklch(0.78 0.15 80 / 0.1)",
-      desc: "Connect your GBP and post updates, photos, and offers directly from your AutoRepHero dashboard.",
-    },
-    {
-      icon: <BarChart3 size={20} />,
-      title: "Reputation Analytics",
-      tag: "ROADMAP",
-      tagColor: "oklch(0.78 0.15 80)",
-      tagBg: "oklch(0.78 0.15 80 / 0.1)",
-      desc: "Track review velocity, response rates, sentiment trends, and competitor comparisons in one dashboard.",
-    },
-    {
-      icon: <Zap size={20} />,
-      title: "AI Review Responses",
-      tag: "COMING SOON",
-      tagColor: "oklch(0.7 0.22 240)",
-      tagBg: "oklch(0.62 0.2 240 / 0.1)",
-      desc: "AI-generated responses to every review — personalized, on-brand, and posted automatically.",
-    },
-    {
-      icon: <Shield size={20} />,
-      title: "Citation Builder",
-      tag: "ROADMAP",
-      tagColor: "oklch(0.78 0.15 80)",
-      tagBg: "oklch(0.78 0.15 80 / 0.1)",
-      desc: "Push your business info to 50+ citation sites. Keep NAP consistent. Dominate local search.",
+      name: "Asset Starter Pack",
+      price: "$197",
+      desc: "Everything in the NFC Starter Pack plus a full digital asset kit — window stickers, receipt inserts, table tents, and social graphics.",
+      includes: [
+        "25 branded NFC cards (NTAG213)",
+        "Pre-programmed to your Review Hub URL",
+        "Full QR code asset library",
+        "Window sticker (print-ready)",
+        "Receipt insert template",
+        "Table tent design",
+        "Social media review request graphics (3 formats)",
+        "Employee training one-pager",
+      ],
+      highlight: true,
+      cta: "ORDER ASSET PACK",
     },
   ];
 
   return (
-    <section style={{ padding: "6rem 1.5rem" }}>
+    <section style={{
+      padding: "6rem 1.5rem",
+      borderTop: "1px solid oklch(0.2 0.03 255 / 0.4)",
+    }}>
       <div style={{ maxWidth: 1200, margin: "0 auto" }}>
         <div style={{ marginBottom: "3.5rem" }}>
           <div style={{
             display: "inline-flex", alignItems: "center", gap: 7,
             padding: "0.3rem 0.85rem", borderRadius: 100,
-            background: "oklch(0.62 0.2 240 / 0.1)",
-            border: "1px solid oklch(0.62 0.2 240 / 0.25)",
-            marginBottom: "1rem",
+            background: "oklch(0.78 0.15 80 / 0.1)",
+            border: "1px solid oklch(0.78 0.15 80 / 0.25)", marginBottom: "1rem",
           }}>
-            <Shield size={11} style={{ color: "oklch(0.7 0.22 240)" }} />
+            <CreditCard size={11} style={{ color: "oklch(0.78 0.15 80)" }} />
             <span style={{
               fontFamily: "'Space Grotesk', sans-serif",
               fontSize: "0.63rem", fontWeight: 700, letterSpacing: "0.1em",
-              color: "oklch(0.7 0.22 240)",
-            }}>THE FULL PLATFORM</span>
+              color: "oklch(0.78 0.15 80)",
+            }}>PHYSICAL DEPLOYMENT KITS</span>
           </div>
           <h2 style={{
             fontFamily: "'Space Grotesk', sans-serif",
             fontSize: "clamp(1.9rem, 4vw, 2.8rem)",
             fontWeight: 800, lineHeight: 1.1,
-            color: "oklch(0.95 0.005 255)",
-            marginBottom: "0.75rem",
+            color: "oklch(0.95 0.005 255)", marginBottom: "0.75rem",
           }}>
-            Everything You Need<br />
-            <span style={{ color: "oklch(0.7 0.22 240)" }}>to Own Your Market.</span>
+            Put the Weapon<br />
+            <span style={{ color: "oklch(0.78 0.15 80)" }}>in Their Hands.</span>
           </h2>
           <p style={{
             fontFamily: "'DM Sans', sans-serif",
-            fontSize: "1rem", color: "oklch(0.5 0.015 255)",
-            maxWidth: 500, lineHeight: 1.65,
+            fontSize: "1rem", color: "oklch(0.5 0.015 255)", maxWidth: 520, lineHeight: 1.65,
           }}>
-            AutoRepHero is building the complete local business reputation stack. Start with the Review Hub today. More tools ship every quarter.
+            The NFC card is what makes this a product, not just software. One-time purchase. Permanent asset. Tap it on any phone and watch the reviews start.
           </p>
         </div>
 
         <div style={{
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-          gap: "1.25rem",
+          gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+          gap: "1.5rem", alignItems: "start",
         }}>
-          {services.map(({ icon, title, tag, tagColor, tagBg, desc }) => (
-            <div key={title} style={{
-              padding: "1.75rem",
-              background: "oklch(0.12 0.02 240)",
-              border: "1px solid oklch(0.2 0.03 255 / 0.5)",
-              borderRadius: 14,
+          {packs.map(({ name, price, desc, includes, highlight, cta }) => (
+            <div key={name} style={{
+              padding: "2rem",
+              background: highlight ? "oklch(0.14 0.025 240)" : "oklch(0.12 0.02 240)",
+              border: `1px solid ${highlight ? "oklch(0.78 0.15 80 / 0.45)" : "oklch(0.2 0.03 255 / 0.5)"}`,
+              borderRadius: 16, position: "relative",
+              boxShadow: highlight ? "0 0 50px oklch(0.78 0.15 80 / 0.1)" : "none",
             }}>
-              <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: "1rem" }}>
+              {highlight && (
                 <div style={{
-                  width: 40, height: 40, borderRadius: 10,
-                  background: "oklch(0.62 0.2 240 / 0.1)",
-                  border: "1px solid oklch(0.62 0.2 240 / 0.2)",
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                  color: "oklch(0.7 0.22 240)",
-                }}>
-                  {icon}
-                </div>
-                <span style={{
+                  position: "absolute", top: -12, left: "50%", transform: "translateX(-50%)",
                   fontFamily: "'Space Grotesk', sans-serif",
-                  fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.08em",
-                  padding: "0.25rem 0.6rem", borderRadius: 100,
-                  background: tagBg,
-                  color: tagColor,
-                  border: `1px solid ${tagColor}44`,
-                }}>{tag}</span>
-              </div>
-              <h3 style={{
+                  fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.1em",
+                  padding: "0.3rem 1rem", borderRadius: 100,
+                  background: "oklch(0.78 0.15 80)", color: "oklch(0.1 0.01 80)",
+                }}>BEST VALUE</div>
+              )}
+              <div style={{
                 fontFamily: "'Space Grotesk', sans-serif",
-                fontSize: "1rem", fontWeight: 700,
-                color: "oklch(0.9 0.005 255)",
-                marginBottom: "0.5rem",
-              }}>{title}</h3>
+                fontSize: "1.1rem", fontWeight: 800,
+                color: "oklch(0.92 0.005 255)", marginBottom: "0.4rem",
+              }}>{name}</div>
+              <div style={{
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontSize: "2.4rem", fontWeight: 800,
+                color: highlight ? "oklch(0.78 0.15 80)" : "oklch(0.95 0.005 255)",
+                lineHeight: 1, marginBottom: "0.75rem",
+              }}>{price} <span style={{ fontSize: "0.9rem", color: "oklch(0.45 0.015 255)", fontWeight: 500 }}>one-time</span></div>
               <p style={{
                 fontFamily: "'DM Sans', sans-serif",
-                fontSize: "0.82rem", color: "oklch(0.48 0.015 255)",
-                lineHeight: 1.6,
+                fontSize: "0.85rem", color: "oklch(0.5 0.015 255)",
+                lineHeight: 1.6, marginBottom: "1.5rem",
               }}>{desc}</p>
+              <button onClick={onGetStarted} style={{
+                width: "100%",
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontSize: "0.8rem", fontWeight: 700, letterSpacing: "0.07em",
+                padding: "0.8rem", borderRadius: 10,
+                background: highlight ? "oklch(0.78 0.15 80)" : "transparent",
+                border: highlight ? "none" : "1px solid oklch(0.3 0.04 255)",
+                color: highlight ? "oklch(0.1 0.01 80)" : "oklch(0.65 0.015 255)",
+                cursor: "pointer", marginBottom: "1.5rem",
+              }}>{cta}</button>
+              <div style={{ borderTop: "1px solid oklch(0.2 0.03 255 / 0.4)", paddingTop: "1.25rem" }}>
+                {includes.map(f => (
+                  <div key={f} style={{ display: "flex", alignItems: "flex-start", gap: 8, marginBottom: "0.6rem" }}>
+                    <CheckCircle2 size={13} style={{ color: "oklch(0.7 0.18 145)", flexShrink: 0, marginTop: 2 }} />
+                    <span style={{
+                      fontFamily: "'DM Sans', sans-serif",
+                      fontSize: "0.8rem", color: "oklch(0.52 0.015 255)", lineHeight: 1.4,
+                    }}>{f}</span>
+                  </div>
+                ))}
+              </div>
             </div>
           ))}
         </div>
@@ -717,13 +765,14 @@ function Services() {
 }
 
 // ─── Pricing ──────────────────────────────────────────────────
-function Pricing() {
+function Pricing({ onGetStarted }: { onGetStarted: () => void }) {
   const plans = [
     {
-      name: "STARTER",
-      price: "$49",
+      name: "BOOTS ON THE GROUND",
+      subtitle: "Starter",
+      price: "$47",
       period: "/mo",
-      desc: "The foot-in-the-door. Everything you need to start collecting reviews today.",
+      desc: "Your foot in the door. The point-of-service review capture weapon — deployed and operational.",
       features: [
         "Review Hub PWA (NFC + QR + link)",
         "Smart platform routing",
@@ -731,47 +780,53 @@ function Pricing() {
         "Up to 5 review platforms",
         "Owner dashboard + analytics",
         "QR code generator",
-        "NFC card setup guide",
-        "14-day free trial",
+        "14-day free trial included",
       ],
+      trial: true,
       cta: "START FREE TRIAL",
       highlight: false,
+      available: true,
     },
     {
-      name: "GROWTH",
-      price: "$99",
+      name: "CORE",
+      subtitle: "Growth",
+      price: "$297",
       period: "/mo",
-      desc: "Add automation. Let the system work while you run your business.",
+      desc: "Add the automation layer. SMS review request workflow + SendGrid email sequences. Let the system work while you run your business.",
       features: [
-        "Everything in Starter",
-        "SMS review request automation",
-        "Email follow-up sequences",
+        "Everything in Boots on the Ground",
+        "SMS review request workflow (Twilio)",
+        "SendGrid email follow-up sequences",
+        "Timed automation: 24h SMS → 3-day email → 7-day nudge",
         "Unlimited review platforms",
-        "AI review response drafts",
         "Review velocity tracking",
         "Priority support",
-        "14-day free trial",
       ],
-      cta: "START FREE TRIAL",
+      trial: false,
+      cta: "JOIN WAITLIST",
       highlight: true,
+      available: false,
     },
     {
-      name: "PRO",
-      price: "$199",
-      period: "/mo",
-      desc: "The full stack. Reputation, visibility, and content — all in one dashboard.",
+      name: "OTTO",
+      subtitle: "Full Automation",
+      price: "Custom",
+      period: "",
+      desc: "Full automation, AI, and Google search optimization. Social and business content creation and posting. The complete reputation and visibility stack.",
       features: [
-        "Everything in Growth",
-        "Google Business Profile connect",
-        "Social posting dashboard",
-        "Video content creator",
-        "Reputation analytics",
-        "White-label option available",
+        "Everything in Core",
+        "Google Business Profile connect + optimization",
+        "AI review response automation",
+        "Social content creation and posting",
+        "Business content calendar",
+        "Reputation analytics dashboard",
+        "Local SEO optimization",
         "Dedicated onboarding call",
-        "14-day free trial",
       ],
-      cta: "START FREE TRIAL",
+      trial: false,
+      cta: "JOIN WAITLIST",
       highlight: false,
+      available: false,
     },
   ];
 
@@ -787,8 +842,7 @@ function Pricing() {
             fontFamily: "'Space Grotesk', sans-serif",
             fontSize: "clamp(1.9rem, 4vw, 2.8rem)",
             fontWeight: 800, lineHeight: 1.1,
-            color: "oklch(0.95 0.005 255)",
-            marginBottom: "0.75rem",
+            color: "oklch(0.95 0.005 255)", marginBottom: "0.75rem",
           }}>
             Straightforward Pricing.<br />
             <span style={{ color: "oklch(0.7 0.22 240)" }}>No Surprises.</span>
@@ -798,24 +852,23 @@ function Pricing() {
             fontSize: "1rem", color: "oklch(0.5 0.015 255)",
             maxWidth: 460, margin: "0 auto", lineHeight: 1.65,
           }}>
-            Start free for 14 days. No credit card required. Cancel anytime. No contracts.
+            Start with Boots on the Ground — 14 days free. No credit card required. Core and Otto are building permanent assets. No trial needed.
           </p>
         </div>
 
         <div style={{
           display: "grid",
           gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-          gap: "1.5rem",
-          alignItems: "start",
+          gap: "1.5rem", alignItems: "start",
         }}>
-          {plans.map(({ name, price, period, desc, features, cta, highlight }) => (
+          {plans.map(({ name, subtitle, price, period, desc, features, trial, cta, highlight, available }) => (
             <div key={name} style={{
               padding: "2rem",
               background: highlight ? "oklch(0.14 0.025 240)" : "oklch(0.12 0.02 240)",
               border: `1px solid ${highlight ? "oklch(0.62 0.2 240 / 0.5)" : "oklch(0.2 0.03 255 / 0.5)"}`,
-              borderRadius: 16,
-              position: "relative",
+              borderRadius: 16, position: "relative",
               boxShadow: highlight ? "0 0 50px oklch(0.62 0.2 240 / 0.12)" : "none",
+              opacity: available ? 1 : 0.85,
             }}>
               {highlight && (
                 <div style={{
@@ -823,29 +876,58 @@ function Pricing() {
                   fontFamily: "'Space Grotesk', sans-serif",
                   fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.1em",
                   padding: "0.3rem 1rem", borderRadius: 100,
-                  background: "oklch(0.62 0.2 240)",
-                  color: "white",
-                }}>MOST POPULAR</div>
+                  background: "oklch(0.62 0.2 240)", color: "white",
+                }}>COMING SOON</div>
+              )}
+              {!available && !highlight && (
+                <div style={{
+                  position: "absolute", top: -12, left: "50%", transform: "translateX(-50%)",
+                  fontFamily: "'Space Grotesk', sans-serif",
+                  fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.1em",
+                  padding: "0.3rem 1rem", borderRadius: 100,
+                  background: "oklch(0.78 0.15 80 / 0.15)",
+                  border: "1px solid oklch(0.78 0.15 80 / 0.4)",
+                  color: "oklch(0.78 0.15 80)",
+                }}>COMING SOON</div>
               )}
 
               <div style={{
                 fontFamily: "'Space Grotesk', sans-serif",
-                fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.1em",
-                color: highlight ? "oklch(0.7 0.22 240)" : "oklch(0.5 0.015 255)",
-                marginBottom: "0.5rem",
+                fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.1em",
+                color: highlight ? "oklch(0.7 0.22 240)" : "oklch(0.45 0.015 255)",
+                marginBottom: "0.25rem",
               }}>{name}</div>
+              <div style={{
+                fontFamily: "'DM Sans', sans-serif",
+                fontSize: "0.8rem", color: "oklch(0.38 0.015 255)",
+                marginBottom: "0.75rem",
+              }}>{subtitle}</div>
 
               <div style={{ display: "flex", alignItems: "baseline", gap: 4, marginBottom: "0.5rem" }}>
                 <span style={{
                   fontFamily: "'Space Grotesk', sans-serif",
-                  fontSize: "2.8rem", fontWeight: 800,
-                  color: "oklch(0.95 0.005 255)", lineHeight: 1,
+                  fontSize: price === "Custom" ? "1.8rem" : "2.8rem",
+                  fontWeight: 800, color: "oklch(0.95 0.005 255)", lineHeight: 1,
                 }}>{price}</span>
-                <span style={{
-                  fontFamily: "'DM Sans', sans-serif",
-                  fontSize: "0.9rem", color: "oklch(0.45 0.015 255)",
-                }}>{period}</span>
+                {period && <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "0.9rem", color: "oklch(0.45 0.015 255)" }}>{period}</span>}
               </div>
+
+              {trial && (
+                <div style={{
+                  display: "inline-flex", alignItems: "center", gap: 5,
+                  padding: "0.2rem 0.65rem", borderRadius: 100,
+                  background: "oklch(0.7 0.18 145 / 0.1)",
+                  border: "1px solid oklch(0.7 0.18 145 / 0.3)",
+                  marginBottom: "0.75rem",
+                }}>
+                  <CheckCircle2 size={10} style={{ color: "oklch(0.7 0.18 145)" }} />
+                  <span style={{
+                    fontFamily: "'Space Grotesk', sans-serif",
+                    fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.08em",
+                    color: "oklch(0.7 0.18 145)",
+                  }}>14-DAY FREE TRIAL</span>
+                </div>
+              )}
 
               <p style={{
                 fontFamily: "'DM Sans', sans-serif",
@@ -853,17 +935,16 @@ function Pricing() {
                 lineHeight: 1.55, marginBottom: "1.5rem",
               }}>{desc}</p>
 
-              <button style={{
+              <button onClick={onGetStarted} style={{
                 width: "100%",
                 fontFamily: "'Space Grotesk', sans-serif",
                 fontSize: "0.8rem", fontWeight: 700, letterSpacing: "0.07em",
                 padding: "0.8rem", borderRadius: 10,
-                background: highlight ? "oklch(0.62 0.2 240)" : "transparent",
-                border: highlight ? "none" : "1px solid oklch(0.3 0.04 255)",
-                color: highlight ? "white" : "oklch(0.65 0.015 255)",
+                background: available ? "oklch(0.62 0.2 240)" : "transparent",
+                border: available ? "none" : "1px solid oklch(0.3 0.04 255)",
+                color: available ? "white" : "oklch(0.55 0.015 255)",
                 cursor: "pointer", marginBottom: "1.5rem",
-                boxShadow: highlight ? "0 0 20px oklch(0.62 0.2 240 / 0.3)" : "none",
-                transition: "all 0.2s",
+                boxShadow: available ? "0 0 20px oklch(0.62 0.2 240 / 0.3)" : "none",
               }}>{cta}</button>
 
               <div style={{ borderTop: "1px solid oklch(0.2 0.03 255 / 0.4)", paddingTop: "1.25rem" }}>
@@ -872,8 +953,7 @@ function Pricing() {
                     <CheckCircle2 size={13} style={{ color: "oklch(0.7 0.18 145)", flexShrink: 0, marginTop: 2 }} />
                     <span style={{
                       fontFamily: "'DM Sans', sans-serif",
-                      fontSize: "0.8rem", color: "oklch(0.52 0.015 255)",
-                      lineHeight: 1.4,
+                      fontSize: "0.8rem", color: "oklch(0.52 0.015 255)", lineHeight: 1.4,
                     }}>{f}</span>
                   </div>
                 ))}
@@ -881,39 +961,97 @@ function Pricing() {
             </div>
           ))}
         </div>
+      </div>
+    </section>
+  );
+}
 
-        {/* Agency note */}
-        <div style={{
-          marginTop: "2rem", padding: "1.5rem 2rem",
-          background: "oklch(0.12 0.02 240)",
-          border: "1px solid oklch(0.78 0.15 80 / 0.25)",
-          borderRadius: 14,
-          display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between",
-          gap: "1rem",
-        }}>
+// ─── Expansion Modules (Roadmap Accordion) ────────────────────
+function ExpansionModules() {
+  const [open, setOpen] = useState(false);
+
+  const modules = [
+    { icon: <Bot size={15} />, title: "AI Review Response Engine", desc: "Auto-generate on-brand responses to every review — positive and negative. Posted automatically." },
+    { icon: <Search size={15} />, title: "Citation Builder", desc: "Push your business info to 50+ citation sites. Keep NAP consistent. Dominate local search." },
+    { icon: <Share2 size={15} />, title: "Social Posting Dashboard", desc: "Schedule and post content across Facebook, Instagram, and LinkedIn from one dashboard." },
+    { icon: <Globe size={15} />, title: "Google Business Profile Optimizer", desc: "Connect GBP and post updates, photos, and offers directly from AutoRepHero." },
+    { icon: <BarChart3 size={15} />, title: "Reputation Analytics", desc: "Track review velocity, sentiment trends, and competitor comparisons in one dashboard." },
+    { icon: <MessageSquare size={15} />, title: "AI Chat Widget", desc: "Opt-in chat widget for client websites — captures leads and triggers automated review follow-up." },
+  ];
+
+  return (
+    <section style={{
+      padding: "4rem 1.5rem",
+      borderTop: "1px solid oklch(0.2 0.03 255 / 0.4)",
+    }}>
+      <div style={{ maxWidth: 900, margin: "0 auto" }}>
+        <button
+          onClick={() => setOpen(!open)}
+          style={{
+            width: "100%", textAlign: "left",
+            background: "oklch(0.12 0.02 240)",
+            border: `1px solid ${open ? "oklch(0.62 0.2 240 / 0.4)" : "oklch(0.2 0.03 255 / 0.5)"}`,
+            borderRadius: 14, padding: "1.5rem 1.75rem",
+            cursor: "pointer",
+            display: "flex", alignItems: "center", justifyContent: "space-between", gap: "1rem",
+          }}>
           <div>
             <div style={{
               fontFamily: "'Space Grotesk', sans-serif",
-              fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.1em",
-              color: "oklch(0.78 0.15 80)", marginBottom: "0.35rem",
-            }}>AGENCY WHITE-LABEL — $299/MO</div>
-            <p style={{
-              fontFamily: "'DM Sans', sans-serif",
-              fontSize: "0.85rem", color: "oklch(0.5 0.015 255)",
-            }}>Full platform under your brand. Unlimited clients. Resell at any price.</p>
+              fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.1em",
+              color: "oklch(0.7 0.22 240)", marginBottom: "0.3rem",
+            }}>PLATFORM ROADMAP</div>
+            <span style={{
+              fontFamily: "'Space Grotesk', sans-serif",
+              fontSize: "1rem", fontWeight: 700,
+              color: "oklch(0.85 0.005 255)",
+            }}>Expansion Modules — Coming Soon</span>
           </div>
-          <button style={{
-            fontFamily: "'Space Grotesk', sans-serif",
-            fontSize: "0.78rem", fontWeight: 700, letterSpacing: "0.06em",
-            padding: "0.65rem 1.5rem", borderRadius: 9,
-            background: "oklch(0.78 0.15 80 / 0.12)",
-            border: "1px solid oklch(0.78 0.15 80 / 0.35)",
-            color: "oklch(0.78 0.15 80)", cursor: "pointer",
-            display: "flex", alignItems: "center", gap: 7,
+          <div style={{
+            flexShrink: 0, transition: "transform 0.25s",
+            transform: open ? "rotate(180deg)" : "none",
+            color: open ? "oklch(0.7 0.22 240)" : "oklch(0.4 0.015 255)",
           }}>
-            CONTACT FOR AGENCY PRICING <ChevronRight size={13} />
-          </button>
-        </div>
+            <ChevronDown size={18} />
+          </div>
+        </button>
+
+        {open && (
+          <div style={{
+            marginTop: "1rem",
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
+            gap: "1rem",
+          }}>
+            {modules.map(({ icon, title, desc }) => (
+              <div key={title} style={{
+                padding: "1.25rem",
+                background: "oklch(0.11 0.018 240)",
+                border: "1px solid oklch(0.18 0.025 255 / 0.5)",
+                borderRadius: 12,
+              }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: "0.6rem" }}>
+                  <div style={{
+                    width: 28, height: 28, borderRadius: 7,
+                    background: "oklch(0.62 0.2 240 / 0.1)",
+                    border: "1px solid oklch(0.62 0.2 240 / 0.2)",
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    color: "oklch(0.62 0.2 240 / 0.7)",
+                  }}>{icon}</div>
+                  <h4 style={{
+                    fontFamily: "'Space Grotesk', sans-serif",
+                    fontSize: "0.82rem", fontWeight: 700,
+                    color: "oklch(0.75 0.005 255)",
+                  }}>{title}</h4>
+                </div>
+                <p style={{
+                  fontFamily: "'DM Sans', sans-serif",
+                  fontSize: "0.75rem", color: "oklch(0.42 0.015 255)", lineHeight: 1.55,
+                }}>{desc}</p>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );
@@ -938,19 +1076,19 @@ function FAQ() {
     },
     {
       q: "What are AI review prompts?",
-      a: "When a customer selects a platform, a sheet slides up with 5 sentence starters tailored to your business type and keywords. For example: 'The team at [business] fixed my [problem] in under an hour...' The customer picks one, finishes the thought in their own words, and submits. It reduces blank-page paralysis and produces more specific, authentic reviews.",
+      a: "When a customer selects a platform, a sheet slides up with 5 sentence starters tailored to your business type and keywords. The customer picks one, finishes the thought in their own words, and submits. It reduces blank-page paralysis and produces more specific, authentic reviews.",
     },
     {
       q: "Can I use this without an NFC card?",
       a: "Absolutely. The app works via QR code (print it on anything), a direct link (text it to customers), or as a home screen shortcut on an employee's phone. The NFC card is the premium experience but is never required.",
     },
     {
-      q: "Is there a contract or long-term commitment?",
-      a: "No contracts. Month-to-month subscription. Cancel anytime. We earn your business every month.",
+      q: "What is the difference between Core and Otto?",
+      a: "Core adds the SMS and email automation layer — timed review request sequences that run automatically after a customer visit. Otto is the full stack: Core automation plus Google Business Profile optimization, AI review responses, and social content creation and posting. Both are coming soon — join the waitlist to be first.",
     },
     {
-      q: "How quickly will I see results?",
-      a: "Most clients see their first reviews within the first week of deployment. Meaningful volume — enough to move your Google ranking — typically builds within 30–60 days depending on your customer traffic.",
+      q: "Is there a contract or long-term commitment?",
+      a: "No contracts. Month-to-month subscription. Cancel anytime. We earn your business every month.",
     },
   ];
 
@@ -961,8 +1099,7 @@ function FAQ() {
           <h2 style={{
             fontFamily: "'Space Grotesk', sans-serif",
             fontSize: "clamp(1.9rem, 4vw, 2.6rem)",
-            fontWeight: 800, lineHeight: 1.1,
-            color: "oklch(0.95 0.005 255)",
+            fontWeight: 800, lineHeight: 1.1, color: "oklch(0.95 0.005 255)",
           }}>
             Questions Answered.<br />
             <span style={{ color: "oklch(0.7 0.22 240)" }}>Straight.</span>
@@ -974,17 +1111,14 @@ function FAQ() {
             <div key={i} style={{
               background: "oklch(0.12 0.02 240)",
               border: `1px solid ${open === i ? "oklch(0.62 0.2 240 / 0.4)" : "oklch(0.2 0.03 255 / 0.5)"}`,
-              borderRadius: 12, overflow: "hidden",
-              transition: "border-color 0.2s",
+              borderRadius: 12, overflow: "hidden", transition: "border-color 0.2s",
             }}>
-              <button
-                onClick={() => setOpen(open === i ? null : i)}
-                style={{
-                  width: "100%", textAlign: "left",
-                  padding: "1.25rem 1.5rem",
-                  background: "none", border: "none", cursor: "pointer",
-                  display: "flex", alignItems: "center", justifyContent: "space-between", gap: "1rem",
-                }}>
+              <button onClick={() => setOpen(open === i ? null : i)} style={{
+                width: "100%", textAlign: "left",
+                padding: "1.25rem 1.5rem",
+                background: "none", border: "none", cursor: "pointer",
+                display: "flex", alignItems: "center", justifyContent: "space-between", gap: "1rem",
+              }}>
                 <span style={{
                   fontFamily: "'Space Grotesk', sans-serif",
                   fontSize: "0.92rem", fontWeight: 700,
@@ -1003,8 +1137,7 @@ function FAQ() {
                 <div style={{ padding: "0 1.5rem 1.25rem" }}>
                   <p style={{
                     fontFamily: "'DM Sans', sans-serif",
-                    fontSize: "0.88rem", color: "oklch(0.52 0.015 255)",
-                    lineHeight: 1.7,
+                    fontSize: "0.88rem", color: "oklch(0.52 0.015 255)", lineHeight: 1.7,
                   }}>{a}</p>
                 </div>
               )}
@@ -1017,12 +1150,7 @@ function FAQ() {
 }
 
 // ─── Final CTA ────────────────────────────────────────────────
-function FinalCTA() {
-  function scrollTo(href: string) {
-    const el = document.querySelector(href);
-    if (el) el.scrollIntoView({ behavior: "smooth" });
-  }
-
+function FinalCTA({ onGetStarted }: { onGetStarted: () => void }) {
   return (
     <section style={{
       padding: "6rem 1.5rem",
@@ -1030,22 +1158,12 @@ function FinalCTA() {
       borderTop: "1px solid oklch(0.2 0.03 255 / 0.4)",
     }}>
       <div style={{ maxWidth: 700, margin: "0 auto", textAlign: "center" }}>
-        <div style={{
-          width: 56, height: 56, borderRadius: 14,
-          background: "oklch(0.62 0.2 240 / 0.12)",
-          border: "1px solid oklch(0.62 0.2 240 / 0.3)",
-          display: "flex", alignItems: "center", justifyContent: "center",
-          margin: "0 auto 1.5rem",
-        }}>
-          <Shield size={24} style={{ color: "oklch(0.7 0.22 240)" }} />
-        </div>
-
+        <img src={ARH_LOGO} alt="AutoRepHero" style={{ width: 64, margin: "0 auto 1.5rem" }} />
         <h2 style={{
           fontFamily: "'Space Grotesk', sans-serif",
           fontSize: "clamp(2rem, 5vw, 3rem)",
           fontWeight: 800, lineHeight: 1.05,
-          color: "oklch(0.95 0.005 255)",
-          marginBottom: "1rem",
+          color: "oklch(0.95 0.005 255)", marginBottom: "1rem",
         }}>
           Your Reputation Is<br />
           <span style={{ color: "oklch(0.78 0.15 80)" }}>Your Most Valuable Asset.</span>
@@ -1056,36 +1174,29 @@ function FinalCTA() {
           lineHeight: 1.65, marginBottom: "2.5rem",
           maxWidth: 480, margin: "0 auto 2.5rem",
         }}>
-          Every day without a review system is a day your competitors are pulling ahead. Start free today. No credit card. No contracts. No excuses.
+          Every day without a review system is a day your competitors are pulling ahead. Deploy your weapon today. 14 days free. No credit card. No contracts.
         </p>
 
         <div style={{ display: "flex", flexWrap: "wrap", gap: 12, justifyContent: "center" }}>
-          <button
-            onClick={() => scrollTo("#pricing")}
-            style={{
-              fontFamily: "'Space Grotesk', sans-serif",
-              fontSize: "0.88rem", fontWeight: 700, letterSpacing: "0.07em",
-              padding: "0.9rem 2.25rem", borderRadius: 10,
-              background: "oklch(0.62 0.2 240)",
-              border: "none", color: "white", cursor: "pointer",
-              boxShadow: "0 0 35px oklch(0.62 0.2 240 / 0.35)",
-              display: "flex", alignItems: "center", gap: 8,
-            }}>
-            START FREE — 14 DAYS <ArrowRight size={15} />
+          <button onClick={onGetStarted} style={{
+            fontFamily: "'Space Grotesk', sans-serif",
+            fontSize: "0.88rem", fontWeight: 700, letterSpacing: "0.07em",
+            padding: "0.9rem 2.25rem", borderRadius: 10,
+            background: "oklch(0.62 0.2 240)", border: "none", color: "white", cursor: "pointer",
+            boxShadow: "0 0 35px oklch(0.62 0.2 240 / 0.35)",
+            display: "flex", alignItems: "center", gap: 8,
+          }}>
+            DEPLOY MY WEAPON — FREE <ArrowRight size={15} />
           </button>
-          <a href="tel:+15093563591"
-            style={{
-              fontFamily: "'Space Grotesk', sans-serif",
-              fontSize: "0.88rem", fontWeight: 700, letterSpacing: "0.07em",
-              padding: "0.9rem 2rem", borderRadius: 10,
-              background: "transparent",
-              border: "1px solid oklch(0.3 0.04 255)",
-              color: "oklch(0.65 0.015 255)", cursor: "pointer",
-              display: "flex", alignItems: "center", gap: 8,
-              textDecoration: "none",
-            }}>
-            <Phone size={14} />
-            (509) 356-3591
+          <a href={`tel:+15098180787`} style={{
+            fontFamily: "'Space Grotesk', sans-serif",
+            fontSize: "0.88rem", fontWeight: 700, letterSpacing: "0.07em",
+            padding: "0.9rem 2rem", borderRadius: 10,
+            background: "transparent", border: "1px solid oklch(0.3 0.04 255)",
+            color: "oklch(0.65 0.015 255)", cursor: "pointer",
+            display: "flex", alignItems: "center", gap: 8, textDecoration: "none",
+          }}>
+            <Phone size={14} /> {PHONE}
           </a>
         </div>
       </div>
@@ -1096,43 +1207,33 @@ function FinalCTA() {
 // ─── Footer ───────────────────────────────────────────────────
 function Footer() {
   return (
-    <footer style={{
-      padding: "2.5rem 1.5rem",
-      borderTop: "1px solid oklch(0.18 0.025 255 / 0.5)",
-    }}>
+    <footer style={{ padding: "2.5rem 1.5rem", borderTop: "1px solid oklch(0.18 0.025 255 / 0.5)" }}>
       <div style={{
         maxWidth: 1200, margin: "0 auto",
         display: "flex", flexWrap: "wrap",
-        alignItems: "center", justifyContent: "space-between",
-        gap: "1rem",
+        alignItems: "center", justifyContent: "space-between", gap: "1rem",
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <Shield size={14} style={{ color: "oklch(0.62 0.2 240 / 0.6)" }} />
+          <img src={ARH_LOGO} alt="AutoRepHero" style={{ width: 22, height: 22, objectFit: "contain" }} />
           <span style={{
             fontFamily: "'Space Grotesk', sans-serif",
-            fontSize: "0.8rem", fontWeight: 700,
-            color: "oklch(0.4 0.015 255)",
+            fontSize: "0.8rem", fontWeight: 700, color: "oklch(0.4 0.015 255)",
           }}>AutoRepHero</span>
-          <span style={{
-            fontFamily: "'DM Sans', sans-serif",
-            fontSize: "0.75rem", color: "oklch(0.32 0.015 255)",
-          }}>· Spokane, WA · chuckZonline LLC</span>
+          <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "0.75rem", color: "oklch(0.32 0.015 255)" }}>
+            · Spokane, WA · chuckZonline LLC
+          </span>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: "1.5rem" }}>
-          <a href="mailto:info@autorephero.com"
-            style={{
-              display: "flex", alignItems: "center", gap: 5,
-              fontFamily: "'DM Sans', sans-serif",
-              fontSize: "0.75rem", color: "oklch(0.38 0.015 255)",
-              textDecoration: "none",
-            }}>
-            <Mail size={12} />
-            info@autorephero.com
-          </a>
-          <span style={{
+          <a href={`mailto:${EMAIL}`} style={{
+            display: "flex", alignItems: "center", gap: 5,
             fontFamily: "'DM Sans', sans-serif",
-            fontSize: "0.72rem", color: "oklch(0.28 0.015 255)",
-          }}>© 2026 AutoRepHero. All rights reserved.</span>
+            fontSize: "0.75rem", color: "oklch(0.38 0.015 255)", textDecoration: "none",
+          }}>
+            <Mail size={12} /> {EMAIL}
+          </a>
+          <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "0.72rem", color: "oklch(0.28 0.015 255)" }}>
+            © 2026 AutoRepHero. All rights reserved.
+          </span>
         </div>
       </div>
     </footer>
@@ -1141,17 +1242,21 @@ function Footer() {
 
 // ─── Main Export ──────────────────────────────────────────────
 export default function LandingPage() {
+  const [modalOpen, setModalOpen] = useState(false);
+
   return (
     <div style={{ minHeight: "100vh", background: "oklch(0.09 0.015 240)" }}>
-      <Nav />
-      <Hero />
+      <LeadModal open={modalOpen} onClose={() => setModalOpen(false)} />
+      <Nav onGetStarted={() => setModalOpen(true)} />
+      <Hero onGetStarted={() => setModalOpen(true)} />
       <StatsBar />
-      <ReviewHubFeature />
+      <ReviewHubFeature onGetStarted={() => setModalOpen(true)} />
       <HowItWorks />
-      <Services />
-      <Pricing />
+      <NFCCards onGetStarted={() => setModalOpen(true)} />
+      <Pricing onGetStarted={() => setModalOpen(true)} />
+      <ExpansionModules />
       <FAQ />
-      <FinalCTA />
+      <FinalCTA onGetStarted={() => setModalOpen(true)} />
       <Footer />
     </div>
   );
