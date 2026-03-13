@@ -2,8 +2,9 @@
    AutoRepHero Review Hub — App Router
    Design: Dark Command Center / Field Operations UI
    Routes:
-   - /           → autorephero.com marketing landing page
-   - /review     → Customer-facing review selector (NFC landing)
+   - /           → Review Hub customer screen (NFC/QR tap destination)
+   - /landing    → autorephero.com marketing landing page
+   - /review     → Review Hub customer screen (alias)
    - /dashboard  → Business owner dashboard (manage platforms, settings)
    - /success    → Post-review success screen
    ============================================================ */
@@ -17,11 +18,16 @@ import LandingPage from "./pages/LandingPage";
 import ReviewLanding from "./pages/ReviewLanding";
 import Dashboard from "./pages/Dashboard";
 import SuccessPage from "./pages/SuccessPage";
+import Home from "./pages/Home";
 
 function Router() {
   return (
     <Switch>
-      <Route path="/" component={LandingPage} />
+      {/* Root → Review Hub (NFC/QR tap destination for app.autorephero.com) */}
+      <Route path="/" component={ReviewLanding} />
+      {/* /landing → Marketing site (for autorephero.com to point to) */}
+      <Route path="/landing" component={LandingPage} />
+      {/* /review → alias for root Review Hub */}
       <Route path="/review" component={ReviewLanding} />
       <Route path="/dashboard" component={Dashboard} />
       <Route path="/success" component={SuccessPage} />
