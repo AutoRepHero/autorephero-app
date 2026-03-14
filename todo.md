@@ -40,3 +40,6 @@
 - [ ] GBP connect
 - [ ] Social posting integration
 - [ ] Citation builder
+
+## Routing Fix
+- [x] Hostname-based routing: autorephero.com → LandingPage, app.autorephero.com → ReviewLanding

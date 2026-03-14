@@ -1,12 +1,18 @@
 /* ============================================================
    AutoRepHero Review Hub — App Router
    Design: Dark Command Center / Field Operations UI
-   Routes:
-   - /           → Review Hub customer screen (NFC/QR tap destination)
-   - /landing    → autorephero.com marketing landing page
-   - /review     → Review Hub customer screen (alias)
-   - /dashboard  → Business owner dashboard (manage platforms, settings)
-   - /success    → Post-review success screen
+
+   HOSTNAME-BASED ROUTING:
+   - autorephero.com (root domain)  → LandingPage (marketing site)
+   - app.autorephero.com            → ReviewLanding (NFC/QR tap destination)
+   - localhost / dev                → ReviewLanding (default for dev)
+
+   PATH ROUTES (apply on top of hostname routing):
+   - /           → hostname-based default (see above)
+   - /landing    → LandingPage (always, any domain)
+   - /review     → ReviewLanding (always, any domain)
+   - /dashboard  → Dashboard (owner PIN-protected panel)
+   - /success    → SuccessPage (post-review confirmation)
    ============================================================ */
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -18,16 +24,35 @@ import LandingPage from "./pages/LandingPage";
 import ReviewLanding from "./pages/ReviewLanding";
 import Dashboard from "./pages/Dashboard";
 import SuccessPage from "./pages/SuccessPage";
-import Home from "./pages/Home";
+
+// Detect if we're on the root marketing domain (not the app subdomain)
+function isMarketingDomain(): boolean {
+  if (typeof window === "undefined") return false;
+  const hostname = window.location.hostname;
+  // autorephero.com and www.autorephero.com → marketing landing page
+  // app.autorephero.com, localhost, *.manus.space → Review Hub app
+  return (
+    hostname === "autorephero.com" ||
+    hostname === "www.autorephero.com"
+  );
+}
+
+// Root route component — serves different content based on hostname
+function RootRoute() {
+  if (isMarketingDomain()) {
+    return <LandingPage />;
+  }
+  return <ReviewLanding />;
+}
 
 function Router() {
   return (
     <Switch>
-      {/* Root → Review Hub (NFC/QR tap destination for app.autorephero.com) */}
-      <Route path="/" component={ReviewLanding} />
-      {/* /landing → Marketing site (for autorephero.com to point to) */}
+      {/* Root → hostname-based: autorephero.com = LandingPage, app.autorephero.com = ReviewLanding */}
+      <Route path="/" component={RootRoute} />
+      {/* Explicit /landing → always shows marketing page (any domain) */}
       <Route path="/landing" component={LandingPage} />
-      {/* /review → alias for root Review Hub */}
+      {/* Explicit /review → always shows Review Hub (any domain) */}
       <Route path="/review" component={ReviewLanding} />
       <Route path="/dashboard" component={Dashboard} />
       <Route path="/success" component={SuccessPage} />
