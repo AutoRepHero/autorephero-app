@@ -34,8 +34,8 @@
 ## Pending
 - [ ] Replace 3 placeholder testimonials with real client quotes
 - [ ] Activate Formspree endpoint (verify chuck@autorephero.com at formspree.io)
-- [ ] Multi-tenant backend — each client gets own subdomain
-- [ ] Stripe billing integration (subscription + one-time purchases)
+- [x] Multi-tenant backend — each client gets own slug-based URL (/review/[slug])
+- [x] Stripe billing integration — live Stripe payment links for Kit ($149) and Core ($47/mo)
 - [ ] SMS/email automation (Twilio + SendGrid)
 - [ ] GBP connect
 - [ ] Social posting integration

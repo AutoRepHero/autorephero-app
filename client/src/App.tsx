@@ -1,18 +1,16 @@
 /* ============================================================
-   AutoRepHero Review Hub — App Router
-   Design: Dark Command Center / Field Operations UI
+   AutoRepHero Review Hub — App Router (Multi-Tenant)
 
-   HOSTNAME-BASED ROUTING:
-   - autorephero.com (root domain)  → LandingPage (marketing site)
-   - app.autorephero.com            → ReviewLanding (NFC/QR tap destination)
-   - localhost / dev                → ReviewLanding (default for dev)
-
-   PATH ROUTES (apply on top of hostname routing):
-   - /           → hostname-based default (see above)
-   - /landing    → LandingPage (always, any domain)
-   - /review     → ReviewLanding (always, any domain)
-   - /dashboard  → Dashboard (owner PIN-protected panel)
-   - /success    → SuccessPage (post-review confirmation)
+   ROUTES:
+   /                  → ReviewLanding (default demo hub)
+   /review/:slug      → Multi-tenant review hub for a business
+   /:slug             → Staff PIN access (same as /review/:slug but PIN-gated)
+   /signup            → Business owner signup
+   /login             → Business owner login
+   /dashboard         → Owner dashboard (auth required)
+   /admin             → Chuck's admin panel (admin role required)
+   /success           → Post-review confirmation
+   /landing           → Marketing landing page (legacy)
    ============================================================ */
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -24,39 +22,34 @@ import LandingPage from "./pages/LandingPage";
 import ReviewLanding from "./pages/ReviewLanding";
 import Dashboard from "./pages/Dashboard";
 import SuccessPage from "./pages/SuccessPage";
-
-// Detect if we're on the root marketing domain (not the app subdomain)
-function isMarketingDomain(): boolean {
-  if (typeof window === "undefined") return false;
-  const hostname = window.location.hostname;
-  // autorephero.com and www.autorephero.com → marketing landing page
-  // app.autorephero.com, localhost, *.manus.space → Review Hub app
-  return (
-    hostname === "autorephero.com" ||
-    hostname === "www.autorephero.com"
-  );
-}
-
-// Root route component — serves different content based on hostname
-function RootRoute() {
-  if (isMarketingDomain()) {
-    return <LandingPage />;
-  }
-  return <ReviewLanding />;
-}
+import SignupPage from "./pages/SignupPage";
+import LoginPage from "./pages/LoginPage";
+import OwnerDashboard from "./pages/OwnerDashboard";
+import AdminPanel from "./pages/AdminPanel";
+import BusinessReviewHub from "./pages/BusinessReviewHub";
 
 function Router() {
   return (
     <Switch>
-      {/* Root → hostname-based: autorephero.com = LandingPage, app.autorephero.com = ReviewLanding */}
-      <Route path="/" component={RootRoute} />
-      {/* Explicit /landing → always shows marketing page (any domain) */}
+      {/* Default demo hub */}
+      <Route path="/" component={ReviewLanding} />
+      {/* Marketing landing page */}
       <Route path="/landing" component={LandingPage} />
-      {/* Explicit /review → always shows Review Hub (any domain) */}
-      <Route path="/review" component={ReviewLanding} />
+      {/* Legacy demo dashboard */}
       <Route path="/dashboard" component={Dashboard} />
+      {/* Post-review success */}
       <Route path="/success" component={SuccessPage} />
-      <Route path="/404" component={NotFound} />
+      {/* Auth */}
+      <Route path="/signup" component={SignupPage} />
+      <Route path="/login" component={LoginPage} />
+      {/* Owner dashboard */}
+      <Route path="/owner" component={OwnerDashboard} />
+      {/* Admin panel (Chuck only) */}
+      <Route path="/admin" component={AdminPanel} />
+      {/* Multi-tenant review hub */}
+      <Route path="/review/:slug" component={BusinessReviewHub} />
+      {/* Staff PIN access via slug */}
+      <Route path="/:slug" component={BusinessReviewHub} />
       <Route component={NotFound} />
     </Switch>
   );

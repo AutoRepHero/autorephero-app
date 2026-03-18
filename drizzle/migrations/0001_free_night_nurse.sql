@@ -1,0 +1,1 @@
+ALTER TABLE `businesses` MODIFY COLUMN `keywords` varchar(1000) DEFAULT '[]';
