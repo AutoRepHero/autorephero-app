@@ -63,7 +63,7 @@ function PriorityBadge({ platform }: { platform: ReviewPlatform }) {
   const styles = {
     gold: "bg-amber-500/15 text-amber-400 border border-amber-500/30",
     blue: "bg-blue-500/15 text-blue-400 border border-blue-500/30",
-    dim: "bg-white/5 text-white/25 border border-white/10",
+    dim: "bg-white/5 text-white/50 border border-white/10",
   };
   return (
     <span className={`text-[0.58rem] font-bold tracking-widest px-2 py-0.5 rounded-sm ${styles[tier]}`}
@@ -111,7 +111,7 @@ function AIPromptSheet({
 
   function copyPrompt(text: string, idx: number) {
     navigator.clipboard.writeText(text).catch(() => {});
-    toast.success("Copied! Paste it into your review.", { duration: 2500 });
+    toast.success("Copied! Now add one personal detail — the service, a name, or result — to make it yours. 🙌", { duration: 4000 });
     setSelected(idx);
   }
 
@@ -139,9 +139,14 @@ function AIPromptSheet({
           </button>
         </div>
 
-        <p className="px-5 text-xs text-white/40 mb-3">
-          Tap a starter to copy it, then paste into your {platform.shortName} review.
-        </p>
+        <div className="px-5 mb-3">
+          <p className="text-xs text-white/60 mb-1.5" style={{ lineHeight: 1.6 }}>
+            ✨ Use a starter below, then <strong style={{ color: "oklch(0.78 0.15 80)" }}>add a few of your own words</strong> to make it personal.
+          </p>
+          <p className="text-[0.65rem] text-white/35" style={{ lineHeight: 1.5 }}>
+            Mention the service you received, a name, or a specific result. Personal reviews help more than generic ones — and they're what Google values most.
+          </p>
+        </div>
 
         {/* Prompts */}
         <div className="px-5 space-y-2 max-h-56 overflow-y-auto pb-2">
@@ -156,8 +161,11 @@ function AIPromptSheet({
               }}
             >
               <div className="flex items-start gap-2">
-                <Copy size={12} className={`mt-0.5 flex-shrink-0 ${selected === i ? "text-amber-400" : "text-white/25"}`} />
+                <Copy size={12} className={`mt-0.5 flex-shrink-0 ${selected === i ? "text-amber-400" : "text-white/50"}`} />
                 <span className="text-xs leading-relaxed text-white/75">{prompt}</span>
+              </div>
+              <div className="text-[0.6rem] mt-1.5 text-right" style={{ color: selected === i ? "oklch(0.78 0.15 80)" : "oklch(0.45 0.02 240)" }}>
+                {selected === i ? "✅ Copied — make it yours!" : "Tap to copy + make it yours"}
               </div>
             </button>
           ))}
@@ -280,10 +288,10 @@ export default function ReviewLanding() {
         <div className="relative z-10 px-5 pt-12 pb-6">
           {/* Top bar */}
           <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded"
+            <div className="flex items-center gap-2.5 px-3.5 py-2 rounded-lg"
               style={{ background: "oklch(0.62 0.2 240 / 0.12)", border: "1px solid oklch(0.62 0.2 240 / 0.25)" }}>
-              <Shield size={10} className="text-electric" style={{ color: "oklch(0.7 0.22 240)" }} />
-              <span className="text-[0.58rem] font-bold tracking-widest"
+              <Shield size={24} className="text-electric" style={{ color: "oklch(0.7 0.22 240)" }} />
+              <span className="text-[1rem] font-bold tracking-widest"
                 style={{ color: "oklch(0.7 0.22 240)", fontFamily: "'Space Grotesk', sans-serif" }}>
                 AUTOREPHERO
               </span>
@@ -353,26 +361,45 @@ export default function ReviewLanding() {
           ALL REVIEW PLATFORMS
         </div>
         <div className="space-y-2">
-          {sortedPlatforms.map((platform: ReviewPlatform, i: number) => (
-            <button
-              key={platform.id}
-              onClick={() => handlePlatformSelect(platform)}
-              className={`platform-card w-full p-3.5 flex items-center gap-3 ${mounted ? "animate-fade-in" : "opacity-0"}`}
-              style={{ animationDelay: `${i * 60}ms` }}
-            >
-              <PlatformIcon platform={platform} size={38} />
-              <div className="flex-1 text-left">
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="text-white/90 font-semibold text-sm"
+          {config.platforms.sort((a, b) => a.order - b.order).map((platform: ReviewPlatform, i: number) => (
+            platform.enabled ? (
+              <button
+                key={platform.id}
+                onClick={() => handlePlatformSelect(platform)}
+                className={`platform-card w-full p-3.5 flex items-center gap-3 ${mounted ? "animate-fade-in" : "opacity-0"}`}
+                style={{ animationDelay: `${i * 60}ms` }}
+              >
+                <PlatformIcon platform={platform} size={38} />
+                <div className="flex-1 text-left">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-white/90 font-semibold text-sm"
+                      style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+                      {platform.name}
+                    </span>
+                    <PriorityBadge platform={platform} />
+                  </div>
+                  <ProgressBar platform={platform} />
+                </div>
+                <ChevronRight size={14} className="text-white/20 flex-shrink-0" />
+              </button>
+            ) : (
+              <div
+                key={platform.id}
+                className={`platform-card w-full p-3.5 flex items-center gap-3 ${mounted ? "animate-fade-in" : "opacity-0"}`}
+                style={{ animationDelay: `${i * 60}ms`, opacity: 0.35, filter: "grayscale(1)", cursor: "not-allowed" }}
+              >
+                <PlatformIcon platform={platform} size={38} />
+                <div className="flex-1 text-left">
+                  <span className="text-white/50 font-semibold text-sm"
                     style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
                     {platform.name}
                   </span>
-                  <PriorityBadge platform={platform} />
+                  <div className="text-[0.6rem] mt-1" style={{ color: "oklch(0.55 0.15 80)" }}>
+                    🔒 Upgrade to unlock
+                  </div>
                 </div>
-                <ProgressBar platform={platform} />
               </div>
-              <ChevronRight size={14} className="text-white/20 flex-shrink-0" />
-            </button>
+            )
           ))}
         </div>
       </div>
@@ -380,7 +407,7 @@ export default function ReviewLanding() {
       {/* ── How It Works ── */}
       <div className="px-5 pb-8 mt-auto">
         <div className="cmd-card p-4">
-          <p className="text-white/50 text-[0.65rem] font-bold tracking-widest mb-2"
+          <p className="text-white/50 text-[0.75rem] font-bold tracking-widest mb-2"
             style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
             HOW IT WORKS
           </p>
@@ -399,9 +426,9 @@ export default function ReviewLanding() {
             </div>
           </div>
         </div>
-        <p className="text-center text-white/15 text-[0.6rem] mt-4"
+        <p className="text-center text-white/50 text-[0.75rem] mt-4"
           style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
-          Powered by AutoRepHero · autorephero.com
+          Powered by <a href="https://autorephero.com" target="_blank" rel="noopener" style={{ color: "oklch(0.65 0.12 240)", textDecoration: "none" }}>AutoRepHero</a> · <a href="https://autorephero.com/privacy" target="_blank" rel="noopener" style={{ color: "oklch(0.55 0.08 240)", textDecoration: "none" }}>Privacy</a> · <a href="https://autorephero.com/terms" target="_blank" rel="noopener" style={{ color: "oklch(0.55 0.08 240)", textDecoration: "none" }}>Terms</a>
         </p>
       </div>
 
