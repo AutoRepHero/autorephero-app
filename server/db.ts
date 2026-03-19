@@ -4,8 +4,23 @@ import { env } from "./env";
 import * as schema from "../drizzle/schema";
 import { eq, and, desc } from "drizzle-orm";
 
-const pool = mysql.createPool(env.DATABASE_URL);
-export const db = drizzle(pool, { schema, mode: "default" });
+// Serverless-compatible: create a single connection (not pool) so Vercel
+// functions don't hang waiting for pool cleanup on cold starts.
+// TiDB/PlanetScale require ssl in production.
+function createDb() {
+  const connectionString = env.DATABASE_URL;
+  // Parse ssl requirement from URL or default to required in production
+  const pool = mysql.createPool({
+    uri: connectionString,
+    ssl: env.NODE_ENV === "production" ? { rejectUnauthorized: false } : undefined,
+    waitForConnections: true,
+    connectionLimit: 1, // Minimal pool for serverless
+    queueLimit: 0,
+  });
+  return drizzle(pool, { schema, mode: "default" });
+}
+
+export const db = createDb();
 
 // ─── Default platform templates ──────────────────────────────
 export const DEFAULT_PLATFORMS = [

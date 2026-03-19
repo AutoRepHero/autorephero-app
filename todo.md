@@ -43,3 +43,10 @@
 
 ## Routing Fix
 - [x] Hostname-based routing: autorephero.com → LandingPage, app.autorephero.com → ReviewLanding
+
+## Vercel Deployment (Chuck's Infrastructure)
+- [x] Convert Express server to Vercel serverless function (api/trpc.ts)
+- [x] Update vercel.json: API routes → serverless, SPA routes → index.html
+- [x] Update build scripts for Vercel (no esbuild server bundle needed)
+- [ ] Push to GitHub AutoRepHero/autorephero-app for auto-deploy
+- [ ] Verify all routes work: /signup, /login, /owner, /admin, /review/[slug]
