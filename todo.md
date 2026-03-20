@@ -72,6 +72,6 @@
 - [x] Push fix to GitHub (commit 399e99b)
 
 ## Vercel Build Fix (functions config)
-- [ ] Remove functions block from vercel.json (build-generated file not valid there)
-- [ ] Ensure api/_trpc.js is committed to git so Vercel sees it at deploy time
-- [ ] Push to GitHub
+- [x] Remove functions block from vercel.json (build-generated file not valid there)
+- [x] Ensure api/_trpc.js is committed to git so Vercel sees it at deploy time
+- [x] Push to GitHub (commit af6ee08)

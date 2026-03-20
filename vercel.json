@@ -1,17 +1,32 @@
 {
   "version": 2,
-  "buildCommand": "pnpm build",
-  "outputDirectory": "dist",
-  "installCommand": "pnpm install",
-  "framework": null,
-  "rewrites": [
+  "builds": [
     {
-      "source": "/api/trpc/:path*",
-      "destination": "/api/_trpc"
+      "src": "api/trpc.ts",
+      "use": "@vercel/node",
+      "config": {
+        "includeFiles": ["server/**", "drizzle/**", "shared/**"]
+      }
     },
     {
-      "source": "/((?!api/).*)",
-      "destination": "/index.html"
+      "src": "package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "dist"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/trpc(.*)",
+      "dest": "/api/trpc.ts"
+    },
+    {
+      "handle": "filesystem"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
     }
   ]
 }
