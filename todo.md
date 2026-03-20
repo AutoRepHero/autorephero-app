@@ -64,3 +64,14 @@
 - [x] Fix vercel.json SPA fallback routing — switched from rewrites to routes, explicit static asset passthrough
 - [x] Fix api/trpc.ts serverless function — proper VercelRequest/VercelResponse handler, strips /api/trpc prefix
 - [x] Push to GitHub and verify deploy
+
+## API JSON Error Fix
+- [x] Diagnose serverless function crash — DATABASE_URL not set in Vercel env vars caused module-load crash
+- [x] Fix: lazy db init via Proxy, DATABASE_URL missing throws at query time (tRPC catches it as JSON error)
+- [x] Verify Neon tables — all 5 tables confirmed: users, businesses, platforms, staff, leads
+- [x] Push fix to GitHub (commit 399e99b)
+
+## Vercel Build Fix (functions config)
+- [ ] Remove functions block from vercel.json (build-generated file not valid there)
+- [ ] Ensure api/_trpc.js is committed to git so Vercel sees it at deploy time
+- [ ] Push to GitHub

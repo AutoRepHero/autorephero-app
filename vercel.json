@@ -4,11 +4,6 @@
   "outputDirectory": "dist",
   "installCommand": "pnpm install",
   "framework": null,
-  "functions": {
-    "api/_trpc.js": {
-      "maxDuration": 30
-    }
-  },
   "rewrites": [
     {
       "source": "/api/trpc/:path*",
