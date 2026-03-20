@@ -58,4 +58,9 @@
 - [x] Update drizzle.config.ts for Postgres
 - [x] Run migrations, verify all 5 tables exist (users, businesses, platforms, staff, leads)
 - [x] Update tests for Postgres — 20/20 passing
-- [ ] Push to GitHub with DATABASE_URL instructions
+- [x] Push to GitHub with DATABASE_URL instructions
+
+## Vercel 404 Fix
+- [x] Fix vercel.json SPA fallback routing — switched from rewrites to routes, explicit static asset passthrough
+- [x] Fix api/trpc.ts serverless function — proper VercelRequest/VercelResponse handler, strips /api/trpc prefix
+- [ ] Push to GitHub and verify deploy
