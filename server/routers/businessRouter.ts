@@ -2,9 +2,9 @@ import { z } from "zod";
 import { router, publicProcedure, protectedProcedure, adminProcedure } from "../trpc";
 import {
   getBusinessBySlug, getBusinessById, getBusinessesByOwner, getAllBusinesses,
-  createBusiness, updateBusiness,
-  getPlatformsByBusiness, updatePlatform,
-  getStaffByBusiness, createStaff, updateStaff,
+  createBusiness, updateBusiness, deleteBusinessById,
+  getPlatformsByBusiness, upsertPlatform,
+  getStaffByBusiness, upsertStaffMember,
   getLeadsByBusiness, getAllLeads, createLead,
   isTrialExpired,
 } from "../db";
@@ -28,7 +28,7 @@ export const businessRouter = router({
       if (!biz) throw new Error("Business not found");
       const platforms = await getPlatformsByBusiness(biz.id);
       const staff = await getStaffByBusiness(biz.id);
-      const trialExpired = isTrialExpired(biz);
+      const trialExpired = isTrialExpired(biz.trialStartedAt);
       return {
         id: biz.id,
         name: biz.name,
@@ -50,7 +50,7 @@ export const businessRouter = router({
     return businesses.map(b => ({
       ...b,
       keywords: JSON.parse(b.keywords || "[]") as string[],
-      trialExpired: isTrialExpired(b),
+      trialExpired: isTrialExpired(b.trialStartedAt),
     }));
   }),
 
@@ -61,13 +61,11 @@ export const businessRouter = router({
       businessType: z.string().optional(),
       phone: z.string().optional(),
       email: z.string().optional(),
-      ownerPin: z.string().length(4).optional(),
       tagline: z.string().optional(),
       keywords: z.array(z.string()).optional(),
     }))
     .mutation(async ({ input, ctx }) => {
       let slug = generateSlug(input.name);
-      // Ensure slug uniqueness
       const existing = await getBusinessBySlug(slug);
       if (existing) slug = `${slug}-${Date.now().toString(36)}`;
 
@@ -78,9 +76,6 @@ export const businessRouter = router({
         businessType: input.businessType,
         phone: input.phone,
         email: input.email,
-        ownerPin: input.ownerPin || "1234",
-        tagline: input.tagline,
-        keywords: input.keywords,
         planTier: "trial",
       });
       return biz;
@@ -102,8 +97,11 @@ export const businessRouter = router({
       const biz = await getBusinessById(input.id);
       if (!biz) throw new Error("Business not found");
       if (biz.ownerId !== ctx.user.id && ctx.user.role !== "admin") throw new Error("Not authorized");
-      const { id, ...data } = input;
-      return updateBusiness(id, data);
+      const { id, keywords, ...rest } = input;
+      return updateBusiness(id, {
+        ...rest,
+        keywords: keywords ? JSON.stringify(keywords) : undefined,
+      });
     }),
 
   // ─── Owner: get platforms ────────────────────────────────────
@@ -119,20 +117,19 @@ export const businessRouter = router({
   // ─── Owner: update platform ──────────────────────────────────
   updatePlatform: protectedProcedure
     .input(z.object({
-      id: z.number(),
       businessId: z.number(),
+      platformId: z.string(),
       url: z.string().optional(),
       reviewCount: z.number().optional(),
       targetCount: z.number().optional(),
       enabled: z.boolean().optional(),
-      sortOrder: z.number().optional(),
     }))
     .mutation(async ({ input, ctx }) => {
       const biz = await getBusinessById(input.businessId);
       if (!biz) throw new Error("Business not found");
       if (biz.ownerId !== ctx.user.id && ctx.user.role !== "admin") throw new Error("Not authorized");
-      const { id, businessId, ...data } = input;
-      await updatePlatform(id, data);
+      const { businessId, platformId, ...data } = input;
+      await upsertPlatform(businessId, platformId, data);
       return { success: true };
     }),
 
@@ -146,23 +143,21 @@ export const businessRouter = router({
       return getStaffByBusiness(input.businessId);
     }),
 
-  addStaff: protectedProcedure
-    .input(z.object({ businessId: z.number(), name: z.string().min(1) }))
+  recordStaffActivity: protectedProcedure
+    .input(z.object({
+      businessId: z.number(),
+      name: z.string().min(1),
+      shares: z.number().optional(),
+      reviews: z.number().optional(),
+    }))
     .mutation(async ({ input, ctx }) => {
       const biz = await getBusinessById(input.businessId);
       if (!biz) throw new Error("Business not found");
       if (biz.ownerId !== ctx.user.id && ctx.user.role !== "admin") throw new Error("Not authorized");
-      return createStaff(input.businessId, input.name);
-    }),
-
-  updateStaff: protectedProcedure
-    .input(z.object({ id: z.number(), businessId: z.number(), shares: z.number().optional(), reviews: z.number().optional() }))
-    .mutation(async ({ input, ctx }) => {
-      const biz = await getBusinessById(input.businessId);
-      if (!biz) throw new Error("Business not found");
-      if (biz.ownerId !== ctx.user.id && ctx.user.role !== "admin") throw new Error("Not authorized");
-      await updateStaff(input.id, { shares: input.shares, reviews: input.reviews });
-      return { success: true };
+      return upsertStaffMember(input.businessId, input.name, {
+        shares: input.shares,
+        reviews: input.reviews,
+      });
     }),
 
   // ─── Owner: leads ────────────────────────────────────────────
@@ -199,7 +194,7 @@ export const businessRouter = router({
     return businesses.map(b => ({
       ...b,
       keywords: JSON.parse(b.keywords || "[]") as string[],
-      trialExpired: isTrialExpired(b),
+      trialExpired: isTrialExpired(b.trialStartedAt),
     }));
   }),
 
@@ -214,6 +209,14 @@ export const businessRouter = router({
       return { success: true };
     }),
 
+  // ─── Admin: delete business ──────────────────────────────────
+  adminDelete: adminProcedure
+    .input(z.object({ businessId: z.number() }))
+    .mutation(async ({ input }) => {
+      await deleteBusinessById(input.businessId);
+      return { success: true };
+    }),
+
   // ─── Admin: create business for a client ────────────────────
   adminCreate: adminProcedure
     .input(z.object({
@@ -222,7 +225,6 @@ export const businessRouter = router({
       businessType: z.string().optional(),
       phone: z.string().optional(),
       email: z.string().optional(),
-      ownerPin: z.string().length(4).optional(),
       planTier: z.enum(["trial", "kit", "core", "pro"]).optional(),
     }))
     .mutation(async ({ input }) => {

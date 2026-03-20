@@ -48,5 +48,14 @@
 - [x] Convert Express server to Vercel serverless function (api/trpc.ts)
 - [x] Update vercel.json: API routes → serverless, SPA routes → index.html
 - [x] Update build scripts for Vercel (no esbuild server bundle needed)
-- [ ] Push to GitHub AutoRepHero/autorephero-app for auto-deploy
+- [x] Push to GitHub AutoRepHero/autorephero-app for auto-deploy
 - [ ] Verify all routes work: /signup, /login, /owner, /admin, /review/[slug]
+
+## Database Migration: MySQL → Neon Postgres
+- [x] Provision Neon Postgres free tier database
+- [x] Migrate Drizzle schema from MySQL to Postgres syntax
+- [x] Update db.ts to use @neondatabase/serverless driver
+- [x] Update drizzle.config.ts for Postgres
+- [x] Run migrations, verify all 5 tables exist (users, businesses, platforms, staff, leads)
+- [x] Update tests for Postgres — 20/20 passing
+- [ ] Push to GitHub with DATABASE_URL instructions

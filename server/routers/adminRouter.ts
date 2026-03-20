@@ -22,7 +22,7 @@ export const adminRouter = router({
     return businesses.map(b => ({
       ...b,
       keywords: JSON.parse(b.keywords || "[]") as string[],
-      trialExpired: isTrialExpired(b),
+      trialExpired: isTrialExpired(b.trialStartedAt),
     }));
   }),
 
@@ -82,7 +82,6 @@ export const adminRouter = router({
         name: input.businessName,
         slug,
         planTier: input.planTier,
-        ownerPin: "1234",
       });
       return { user, business: biz };
     }),

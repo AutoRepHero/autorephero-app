@@ -369,7 +369,7 @@ export default function OwnerDashboard() {
                         </div>
                         {!locked && (
                           <button
-                            onClick={() => updatePlatform.mutate({ id: p.id, businessId: selectedBizId!, enabled: !p.enabled })}
+                            onClick={() => updatePlatform.mutate({ businessId: selectedBizId!, platformId: p.platformId, enabled: !p.enabled })}
                             className="text-white/60 hover:text-white transition-colors">
                             {p.enabled ? <ToggleRight size={24} style={{ color: "oklch(0.7 0.22 240)" }} /> : <ToggleLeft size={24} />}
                           </button>
@@ -384,7 +384,7 @@ export default function OwnerDashboard() {
                             defaultValue={p.url || ""}
                             onBlur={e => {
                               if (e.target.value !== (p.url || "")) {
-                                updatePlatform.mutate({ id: p.id, businessId: selectedBizId!, url: e.target.value });
+                                updatePlatform.mutate({ businessId: selectedBizId!, platformId: p.platformId, url: e.target.value });
                               }
                             }}
                           />
@@ -424,11 +424,11 @@ export default function OwnerDashboard() {
 function StaffTab({ businessId }: { businessId: number }) {
   const [newName, setNewName] = useState("");
   const staffQuery = trpc.business.getStaff.useQuery({ businessId });
-  const addStaff = trpc.business.addStaff.useMutation({
+  const addStaff = trpc.business.recordStaffActivity.useMutation({
     onSuccess: () => { staffQuery.refetch(); setNewName(""); },
-    onError: (e) => toast.error(e.message),
+    onError: (e: { message: string }) => toast.error(e.message),
   });
-  const updateStaff = trpc.business.updateStaff.useMutation({
+  const updateStaff = trpc.business.recordStaffActivity.useMutation({
     onSuccess: () => staffQuery.refetch(),
   });
 
@@ -463,11 +463,11 @@ function StaffTab({ businessId }: { businessId: number }) {
             <div className="text-white/30 text-xs">{s.shares} shares · {s.reviews} reviews</div>
           </div>
           <div className="flex gap-2">
-            <button onClick={() => updateStaff.mutate({ id: s.id, businessId, shares: s.shares + 1 })}
+            <button onClick={() => updateStaff.mutate({ businessId, name: s.name, shares: 1 })}
               className="text-xs text-blue-400 hover:text-blue-300 px-2 py-1 rounded border border-blue-500/30 transition-all">
               +Share
             </button>
-            <button onClick={() => updateStaff.mutate({ id: s.id, businessId, reviews: s.reviews + 1 })}
+            <button onClick={() => updateStaff.mutate({ businessId, name: s.name, reviews: 1 })}
               className="text-xs text-emerald-400 hover:text-emerald-300 px-2 py-1 rounded border border-emerald-500/30 transition-all">
               +Review
             </button>
