@@ -4,9 +4,24 @@ import { env } from "./env";
 import * as schema from "../drizzle/schema";
 import { eq, and, desc } from "drizzle-orm";
 
-// Neon serverless HTTP driver — works perfectly in Vercel serverless functions
-const sql = neon(env.DATABASE_URL);
-export const db = drizzle(sql, { schema });
+// Neon serverless HTTP driver — lazy singleton, only connects on first query
+let _db: ReturnType<typeof drizzle> | null = null;
+export function getDb() {
+  if (!_db) {
+    if (!env.DATABASE_URL) {
+      throw new Error("DATABASE_URL environment variable is not set. Add it in Vercel project settings.");
+    }
+    const sql = neon(env.DATABASE_URL);
+    _db = drizzle(sql, { schema });
+  }
+  return _db;
+}
+// Convenience alias used throughout the codebase
+export const db = new Proxy({} as ReturnType<typeof drizzle>, {
+  get(_target, prop) {
+    return (getDb() as any)[prop];
+  },
+});
 
 // ─── Default platform templates ──────────────────────────────
 export const DEFAULT_PLATFORMS = [
