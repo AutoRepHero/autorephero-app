@@ -63,4 +63,4 @@
 ## Vercel 404 Fix
 - [x] Fix vercel.json SPA fallback routing — switched from rewrites to routes, explicit static asset passthrough
 - [x] Fix api/trpc.ts serverless function — proper VercelRequest/VercelResponse handler, strips /api/trpc prefix
-- [ ] Push to GitHub and verify deploy
+- [x] Push to GitHub and verify deploy

@@ -1,7 +1,7 @@
 {
   "version": 2,
   "buildCommand": "pnpm build",
-  "outputDirectory": "dist/public",
+  "outputDirectory": "dist",
   "installCommand": "pnpm install",
   "framework": null,
   "functions": {
@@ -10,22 +10,14 @@
       "maxDuration": 30
     }
   },
-  "routes": [
+  "rewrites": [
     {
-      "src": "/api/trpc/(.*)",
-      "dest": "/api/trpc"
+      "source": "/api/trpc/:path*",
+      "destination": "/api/trpc"
     },
     {
-      "src": "/assets/(.*)",
-      "dest": "/assets/$1"
-    },
-    {
-      "src": "/(.*\\.(js|css|ico|png|svg|webp|woff|woff2|ttf|json|txt|map))",
-      "dest": "/$1"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/index.html"
+      "source": "/((?!api/).*)",
+      "destination": "/index.html"
     }
   ]
 }
