@@ -247,7 +247,7 @@ const appRouter = t.router({ auth: authRouter, business: businessRouter, admin: 
 export type AppRouter = typeof appRouter;
 
 // ─── Vercel Edge/Serverless Handler ──────────────────────────
-export const config = { runtime: "nodejs22.x", maxDuration: 30 };
+export const config = { runtime: "nodejs", maxDuration: 30 };
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   const proto = req.headers["x-forwarded-proto"] || "https";
