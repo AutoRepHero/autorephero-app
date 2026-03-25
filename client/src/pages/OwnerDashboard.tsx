@@ -90,13 +90,18 @@ function UpgradePrompt({ expired }: { expired: boolean }) {
 export default function OwnerDashboard() {
   const [, navigate] = useLocation();
   const [activeTab, setActiveTab] = useState<"overview" | "platforms" | "staff" | "settings">("overview");
-  const [selectedBizId, setSelectedBizId] = useState<number | null>(null);
+  const urlBizId = new URLSearchParams(window.location.search).get("bizId");
+  const [selectedBizId, setSelectedBizId] = useState<number | null>(urlBizId ? parseInt(urlBizId) : null);
   const [showCreateBiz, setShowCreateBiz] = useState(false);
   const [newBizName, setNewBizName] = useState("");
   const [showQR, setShowQR] = useState(false);
 
   const meQuery = trpc.auth.me.useQuery();
-  const bizQuery = trpc.business.myBusinesses.useQuery();
+  const isAdmin = meQuery.data?.role === "admin";
+  // Admin with bizId param can see any business; regular users see only theirs
+  const bizQuery = isAdmin && urlBizId
+    ? trpc.admin.getAllBusinesses.useQuery()
+    : trpc.business.myBusinesses.useQuery();
   const logout = trpc.auth.logout.useMutation({
     onSuccess: () => navigate("/login"),
   });

@@ -74,6 +74,11 @@ function BusinessRow({ biz, onRefresh }: { biz: any; onRefresh: () => void }) {
           <div className="text-white/30 text-xs mt-0.5">{biz.ownerEmail} · /{biz.slug}</div>
         </div>
         <div className="flex items-center gap-2">
+          <a href={`/owner?bizId=${biz.id}`}
+            onClick={e => e.stopPropagation()}
+            className="text-[0.65rem] text-blue-400 hover:text-blue-300 px-2 py-1 rounded border border-blue-400/30 hover:border-blue-300/50 transition-all">
+            Manage
+          </a>
           <a href={hubUrl} target="_blank" rel="noopener noreferrer"
             onClick={e => e.stopPropagation()}
             className="text-white/30 hover:text-white/60 p-1.5 rounded transition-all">
