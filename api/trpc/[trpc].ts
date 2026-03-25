@@ -222,6 +222,21 @@ const businessRouter = t.router({
 });
 
 const adminRouter = t.router({
+  createBusiness: protectedProcedure.input(z.object({ ownerName: z.string(), ownerEmail: z.string().email(), ownerPassword: z.string().min(8), businessName: z.string(), planTier: z.enum(["trial", "kit", "core", "pro"]).optional() })).mutation(async ({ input, ctx }) => {
+    if (ctx.user.role !== "admin") throw new TRPCError({ code: "FORBIDDEN" });
+    let userRows = await db.select().from(users).where(eq(users.email, input.ownerEmail.toLowerCase())).limit(1);
+    let owner = userRows[0];
+    if (!owner) {
+      const hash = await bcrypt.hash(input.ownerPassword, 12);
+      const result = await db.insert(users).values({ email: input.ownerEmail.toLowerCase(), passwordHash: hash, name: input.ownerName, role: "user" }).returning({ id: users.id, email: users.email, name: users.name, role: users.role });
+      owner = result[0] as any;
+    }
+    const slug = input.businessName.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") + "-" + Math.random().toString(36).slice(2, 6);
+    const bizResult = await db.insert(businesses).values({ ownerId: owner.id, name: input.businessName, slug, planTier: input.planTier || "trial" }).returning({ id: businesses.id });
+    await db.insert(platforms).values(DEFAULT_PLATFORMS.map(p => ({ ...p, businessId: bizResult[0].id })));
+    const biz = await db.select().from(businesses).where(eq(businesses.id, bizResult[0].id)).limit(1);
+    return biz[0];
+  }),
   allBusinesses: protectedProcedure.query(async ({ ctx }) => { if (ctx.user.role !== "admin") throw new TRPCError({ code: "FORBIDDEN" }); return db.select().from(businesses).orderBy(desc(businesses.createdAt)); }),
   allLeads: protectedProcedure.query(async ({ ctx }) => { if (ctx.user.role !== "admin") throw new TRPCError({ code: "FORBIDDEN" }); return db.select().from(leads).orderBy(desc(leads.createdAt)); }),
   allUsers: protectedProcedure.query(async ({ ctx }) => { if (ctx.user.role !== "admin") throw new TRPCError({ code: "FORBIDDEN" }); return db.select({ id: users.id, email: users.email, name: users.name, role: users.role, createdAt: users.createdAt }).from(users).orderBy(desc(users.createdAt)); }),
