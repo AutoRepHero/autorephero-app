@@ -209,10 +209,26 @@ export type AppRouter = typeof appRouter;
 export const config = { runtime: "edge" };
 
 export default async function handler(req: Request) {
-  return fetchRequestHandler({
+  const response = await fetchRequestHandler({
     endpoint: "/api/trpc",
     req,
     router: appRouter,
     createContext: () => createContext({ req }),
+    responseMeta: ({ data }) => {
+      // Set auth cookie when signup/login returns a token
+      const results = Array.isArray(data) ? data : [data];
+      for (const result of results) {
+        const token = (result as any)?.token;
+        if (token) {
+          return {
+            headers: {
+              "Set-Cookie": `arh_token=${token}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${30 * 24 * 3600}`,
+            },
+          };
+        }
+      }
+      return {};
+    },
   });
+  return response;
 }
