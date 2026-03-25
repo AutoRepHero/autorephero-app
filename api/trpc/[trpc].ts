@@ -243,8 +243,10 @@ const adminRouter = t.router({
     await db.update(businesses).set({ planTier: input.planTier }).where(eq(businesses.id, input.businessId));
     return { success: true };
   }),
-  allBusinesses: protectedProcedure.query(async ({ ctx }) => { if (ctx.user.role !== "admin") throw new TRPCError({ code: "FORBIDDEN" }); return db.select().from(businesses).orderBy(desc(businesses.createdAt)); }),
+  allBusinesses: protectedProcedure.query(async ({ ctx }) => { if (ctx.user.role !== "admin") throw new TRPCError({ code: "FORBIDDEN" }); const biz = await db.select().from(businesses).orderBy(desc(businesses.createdAt)); const allUsers = await db.select({ id: users.id, email: users.email, name: users.name }).from(users); return biz.map(b => ({ ...b, ownerEmail: allUsers.find(u => u.id === b.ownerId)?.email || "", ownerName: allUsers.find(u => u.id === b.ownerId)?.name || "" })); }),
+  getAllBusinesses: protectedProcedure.query(async ({ ctx }) => { if (ctx.user.role !== "admin") throw new TRPCError({ code: "FORBIDDEN" }); const biz = await db.select().from(businesses).orderBy(desc(businesses.createdAt)); const allUsers = await db.select({ id: users.id, email: users.email, name: users.name }).from(users); return biz.map(b => ({ ...b, ownerEmail: allUsers.find(u => u.id === b.ownerId)?.email || "", ownerName: allUsers.find(u => u.id === b.ownerId)?.name || "" })); }),
   allLeads: protectedProcedure.query(async ({ ctx }) => { if (ctx.user.role !== "admin") throw new TRPCError({ code: "FORBIDDEN" }); return db.select().from(leads).orderBy(desc(leads.createdAt)); }),
+  getAllLeads: protectedProcedure.query(async ({ ctx }) => { if (ctx.user.role !== "admin") throw new TRPCError({ code: "FORBIDDEN" }); return db.select().from(leads).orderBy(desc(leads.createdAt)); }),
   allUsers: protectedProcedure.query(async ({ ctx }) => { if (ctx.user.role !== "admin") throw new TRPCError({ code: "FORBIDDEN" }); return db.select({ id: users.id, email: users.email, name: users.name, role: users.role, createdAt: users.createdAt }).from(users).orderBy(desc(users.createdAt)); }),
 });
 
