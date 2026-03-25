@@ -253,5 +253,5 @@ app.use(express.json());
 app.use("/api/trpc", createExpressMiddleware({ router: appRouter, createContext }));
 app.get("/api/health", (_req, res) => res.json({ ok: true }));
 
-// Export for CJS require
-module.exports = app;
+// Vercel serverless handler
+export default app;
