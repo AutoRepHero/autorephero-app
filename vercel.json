@@ -1,5 +1,5 @@
 {
-  "buildCommand": "npx vite build && npx esbuild api-src/server.ts --bundle --platform=node --target=node18 --format=cjs --outfile=api/server.js",
+  "buildCommand": "npx vite build",
   "outputDirectory": "dist",
   "installCommand": "pnpm install --no-frozen-lockfile",
   "rewrites": [
