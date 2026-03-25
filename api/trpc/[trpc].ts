@@ -1,4 +1,5 @@
 import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
+import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { initTRPC, TRPCError } from "@trpc/server";
 import { z } from "zod";
 import bcrypt from "bcryptjs";
@@ -246,29 +247,29 @@ const appRouter = t.router({ auth: authRouter, business: businessRouter, admin: 
 export type AppRouter = typeof appRouter;
 
 // ─── Vercel Edge/Serverless Handler ──────────────────────────
-export const config = { runtime: "edge" };
+export const config = { runtime: "nodejs22.x", maxDuration: 30 };
 
-export default async function handler(req: Request) {
+export default async function handler(req: VercelRequest, res: VercelResponse) {
+  const proto = req.headers["x-forwarded-proto"] || "https";
+  const host = req.headers["x-forwarded-host"] || req.headers.host || "app.autorephero.com";
+  const url = `${proto}://${host}${req.url}`;
+  
+  const fetchReq = new Request(url, {
+    method: req.method || "GET",
+    headers: req.headers as any,
+    body: req.method !== "GET" && req.method !== "HEAD" ? JSON.stringify(req.body) : undefined,
+  });
+
   const response = await fetchRequestHandler({
     endpoint: "/api/trpc",
-    req,
+    req: fetchReq,
     router: appRouter,
-    createContext: () => createContext({ req }),
-    responseMeta: ({ data }) => {
-      // Set auth cookie when signup/login returns a token
-      const results = Array.isArray(data) ? data : [data];
-      for (const result of results) {
-        const token = (result as any)?.token;
-        if (token) {
-          return {
-            headers: {
-              "Set-Cookie": `arh_token=${token}; Path=/; SameSite=Lax; Max-Age=${30 * 24 * 3600}`,
-            },
-          };
-        }
-      }
-      return {};
-    },
+    createContext: () => createContext({ req: fetchReq }),
   });
-  return response;
+
+  // Copy response headers
+  response.headers.forEach((value, key) => res.setHeader(key, value));
+  res.status(response.status);
+  const body = await response.text();
+  res.send(body);
 }
