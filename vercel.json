@@ -1,13 +1,6 @@
 {
-  "buildCommand": "npm run build",
-  "outputDirectory": "dist",
   "rewrites": [
     { "source": "/api/trpc/(.*)", "destination": "/api/server" },
     { "source": "/(.*)", "destination": "/api/server" }
-  ],
-  "functions": {
-    "api/server.ts": {
-      "runtime": "@vercel/node@3"
-    }
-  }
+  ]
 }
