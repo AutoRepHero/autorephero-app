@@ -15,6 +15,7 @@ export default function LoginPage() {
 
   const login = trpc.auth.login.useMutation({
     onSuccess: (data) => {
+      if (data.token) document.cookie = `arh_token=${data.token}; path=/; max-age=${30*24*3600}; samesite=lax`;
       toast.success(`Welcome back, ${data.user.name || "Commander"}`);
       if (data.user.role === "admin") {
         navigate("/admin");

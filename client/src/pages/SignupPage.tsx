@@ -14,7 +14,8 @@ export default function SignupPage() {
   const [showPw, setShowPw] = useState(false);
 
   const signup = trpc.auth.signup.useMutation({
-    onSuccess: () => {
+    onSuccess: (data) => {
+      if (data.token) document.cookie = `arh_token=${data.token}; path=/; max-age=${30*24*3600}; samesite=lax`;
       toast.success("Account created. Setting up your dashboard...");
       navigate("/owner");
     },

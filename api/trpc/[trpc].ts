@@ -262,7 +262,7 @@ export default async function handler(req: Request) {
         if (token) {
           return {
             headers: {
-              "Set-Cookie": `arh_token=${token}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${30 * 24 * 3600}`,
+              "Set-Cookie": `arh_token=${token}; Path=/; SameSite=Lax; Max-Age=${30 * 24 * 3600}`,
             },
           };
         }
