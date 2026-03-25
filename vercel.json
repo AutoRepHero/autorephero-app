@@ -3,6 +3,7 @@
   "outputDirectory": "dist",
   "installCommand": "pnpm install --no-frozen-lockfile",
   "rewrites": [
+    { "source": "/api/health", "destination": "/api/health" },
     { "source": "/api/(.*)", "destination": "/api/server" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
