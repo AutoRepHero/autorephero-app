@@ -1,33 +1,13 @@
 {
-  "version": 2,
-  "installCommand": "npm install --legacy-peer-deps",
-  "builds": [
-    {
-      "src": "api/trpc.ts",
-      "use": "@vercel/node",
-      "config": {
-        "includeFiles": ["server/**", "drizzle/**", "shared/**"]
-      }
-    },
-    {
-      "src": "package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "dist"
-      }
-    }
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "rewrites": [
+    { "source": "/api/trpc/(.*)", "destination": "/api/server" },
+    { "source": "/(.*)", "destination": "/api/server" }
   ],
-  "routes": [
-    {
-      "src": "/api/trpc(.*)",
-      "dest": "/api/trpc.ts"
-    },
-    {
-      "handle": "filesystem"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/index.html"
+  "functions": {
+    "api/server.ts": {
+      "runtime": "@vercel/node@3"
     }
-  ]
+  }
 }

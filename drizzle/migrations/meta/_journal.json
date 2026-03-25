@@ -1,19 +1,12 @@
 {
   "version": "7",
-  "dialect": "mysql",
+  "dialect": "postgresql",
   "entries": [
     {
       "idx": 0,
-      "version": "5",
-      "when": 1773866513421,
-      "tag": "0000_clever_snowbird",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "5",
-      "when": 1773867396172,
-      "tag": "0001_free_night_nurse",
+      "version": "7",
+      "when": 1774472313941,
+      "tag": "0000_silent_gauntlet",
       "breakpoints": true
     }
   ]
