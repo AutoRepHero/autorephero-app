@@ -2,14 +2,12 @@ import express from "express";
 import { createExpressMiddleware } from "@trpc/server/adapters/express";
 import { initTRPC, TRPCError } from "@trpc/server";
 import { z } from "zod";
-// superjson removed — ESM-only package breaks Vercel CJS
 import bcrypt from "bcryptjs";
 import { SignJWT, jwtVerify } from "jose";
 import { drizzle } from "drizzle-orm/neon-http";
 import { neon } from "@neondatabase/serverless";
 import { pgTable, serial, varchar, text, timestamp, integer, boolean, pgEnum } from "drizzle-orm/pg-core";
 import { eq, desc } from "drizzle-orm";
-import type { VercelRequest, VercelResponse } from "@vercel/node";
 
 // ─── Schema ──────────────────────────────────────────────────
 const roleEnum = pgEnum("role", ["user", "admin"]);
@@ -247,21 +245,13 @@ const adminRouter = t.router({
 });
 
 // ─── App Router ──────────────────────────────────────────────
-const appRouter = t.router({
-  auth: authRouter,
-  business: businessRouter,
-  admin: adminRouter,
-});
+const appRouter = t.router({ auth: authRouter, business: businessRouter, admin: adminRouter });
 
-// ─── Express App ─────────────────────────────────────────────
+// ─── Express ─────────────────────────────────────────────────
 const app = express();
 app.use(express.json());
-
 app.use("/api/trpc", createExpressMiddleware({ router: appRouter, createContext }));
-
-// Health check
 app.get("/api/health", (_req, res) => res.json({ ok: true }));
 
-export default function handler(req: VercelRequest, res: VercelResponse) {
-  return app(req as any, res as any);
-}
+// Export for CJS require
+module.exports = app;
