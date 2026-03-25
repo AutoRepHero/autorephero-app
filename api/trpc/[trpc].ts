@@ -238,6 +238,11 @@ const adminRouter = t.router({
     const biz = await db.select().from(businesses).where(eq(businesses.id, bizResult[0].id)).limit(1);
     return biz[0];
   }),
+  updateBusinessPlan: protectedProcedure.input(z.object({ businessId: z.number(), planTier: z.enum(["trial", "kit", "core", "pro"]) })).mutation(async ({ input, ctx }) => {
+    if (ctx.user.role !== "admin") throw new TRPCError({ code: "FORBIDDEN" });
+    await db.update(businesses).set({ planTier: input.planTier }).where(eq(businesses.id, input.businessId));
+    return { success: true };
+  }),
   allBusinesses: protectedProcedure.query(async ({ ctx }) => { if (ctx.user.role !== "admin") throw new TRPCError({ code: "FORBIDDEN" }); return db.select().from(businesses).orderBy(desc(businesses.createdAt)); }),
   allLeads: protectedProcedure.query(async ({ ctx }) => { if (ctx.user.role !== "admin") throw new TRPCError({ code: "FORBIDDEN" }); return db.select().from(leads).orderBy(desc(leads.createdAt)); }),
   allUsers: protectedProcedure.query(async ({ ctx }) => { if (ctx.user.role !== "admin") throw new TRPCError({ code: "FORBIDDEN" }); return db.select({ id: users.id, email: users.email, name: users.name, role: users.role, createdAt: users.createdAt }).from(users).orderBy(desc(users.createdAt)); }),
