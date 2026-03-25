@@ -1,6 +1,6 @@
 import { initTRPC, TRPCError } from "@trpc/server";
 import type { Request, Response } from "express";
-import superjson from "superjson";
+// superjson removed — ESM-only, breaks Vercel CJS
 import { verifyToken, parseCookies } from "./auth";
 import { getUserById } from "./db";
 
@@ -22,7 +22,7 @@ export async function createContext({ req, res }: { req: Request; res: Response 
 export type Context = Awaited<ReturnType<typeof createContext>>;
 
 // ─── tRPC init ────────────────────────────────────────────────
-const t = initTRPC.context<Context>().create({ transformer: superjson });
+const t = initTRPC.context<Context>().create();
 
 export const router = t.router;
 export const publicProcedure = t.procedure;

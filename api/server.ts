@@ -2,7 +2,7 @@ import express from "express";
 import { createExpressMiddleware } from "@trpc/server/adapters/express";
 import { initTRPC, TRPCError } from "@trpc/server";
 import { z } from "zod";
-import superjson from "superjson";
+// superjson removed — ESM-only package breaks Vercel CJS
 import bcrypt from "bcryptjs";
 import { SignJWT, jwtVerify } from "jose";
 import { drizzle } from "drizzle-orm/neon-http";
@@ -130,7 +130,7 @@ async function createContext({ req, res }: { req: any; res: any }) {
   return { req, res, user };
 }
 
-const t = initTRPC.context<Awaited<ReturnType<typeof createContext>>>().create({ transformer: superjson });
+const t = initTRPC.context<Awaited<ReturnType<typeof createContext>>>().create();
 
 const publicProcedure = t.procedure;
 const protectedProcedure = t.procedure.use(({ ctx, next }) => {
