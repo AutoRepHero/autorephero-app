@@ -158,15 +158,23 @@ const authRouter = t.router({
 });
 
 const businessRouter = t.router({
-  create: protectedProcedure.input(z.object({ name: z.string().min(2), slug: z.string().min(2), businessType: z.string().optional(), phone: z.string().optional(), email: z.string().optional(), tagline: z.string().optional(), keywords: z.array(z.string()).optional() })).mutation(async ({ input, ctx }) => {
-    const existing = await db.select().from(businesses).where(eq(businesses.slug, input.slug)).limit(1);
-    if (existing[0]) throw new Error("Slug taken");
-    const result = await db.insert(businesses).values({ ownerId: ctx.user.id, name: input.name, slug: input.slug, businessType: input.businessType || "", phone: input.phone || "", email: input.email || "", tagline: input.tagline || "", keywords: JSON.stringify(input.keywords || []) }).returning({ id: businesses.id });
+  create: protectedProcedure.input(z.object({ name: z.string().min(2), slug: z.string().optional(), businessType: z.string().optional(), phone: z.string().optional(), email: z.string().optional(), tagline: z.string().optional(), keywords: z.array(z.string()).optional() })).mutation(async ({ input, ctx }) => {
+    const slug = (input.slug || input.name).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") + "-" + Math.random().toString(36).slice(2, 6);
+    const existing = await db.select().from(businesses).where(eq(businesses.slug, slug)).limit(1);
+    if (existing[0]) throw new Error("Slug taken, try again");
+    const result = await db.insert(businesses).values({ ownerId: ctx.user.id, name: input.name, slug, businessType: input.businessType || "", phone: input.phone || "", email: input.email || "", tagline: input.tagline || "", keywords: JSON.stringify(input.keywords || []) }).returning({ id: businesses.id });
     await db.insert(platforms).values(DEFAULT_PLATFORMS.map(p => ({ ...p, businessId: result[0].id })));
     const biz = await db.select().from(businesses).where(eq(businesses.id, result[0].id)).limit(1);
     return biz[0];
   }),
   mine: protectedProcedure.query(async ({ ctx }) => db.select().from(businesses).where(eq(businesses.ownerId, ctx.user.id)).orderBy(desc(businesses.createdAt))),
+  myBusinesses: protectedProcedure.query(async ({ ctx }) => db.select().from(businesses).where(eq(businesses.ownerId, ctx.user.id)).orderBy(desc(businesses.createdAt))),
+  getPublic: publicProcedure.input(z.object({ slug: z.string() })).query(async ({ input }) => {
+    const biz = await db.select().from(businesses).where(eq(businesses.slug, input.slug)).limit(1);
+    if (!biz[0]) return null;
+    const plats = await db.select().from(platforms).where(eq(platforms.businessId, biz[0].id)).orderBy(platforms.sortOrder);
+    return { ...biz[0], platforms: plats };
+  }),
   bySlug: publicProcedure.input(z.object({ slug: z.string() })).query(async ({ input }) => {
     const biz = await db.select().from(businesses).where(eq(businesses.slug, input.slug)).limit(1);
     if (!biz[0]) return null;
@@ -174,6 +182,7 @@ const businessRouter = t.router({
     return { ...biz[0], platforms: plats };
   }),
   platforms: protectedProcedure.input(z.object({ businessId: z.number() })).query(async ({ input }) => db.select().from(platforms).where(eq(platforms.businessId, input.businessId)).orderBy(platforms.sortOrder)),
+  getPlatforms: protectedProcedure.input(z.object({ businessId: z.number() })).query(async ({ input }) => db.select().from(platforms).where(eq(platforms.businessId, input.businessId)).orderBy(platforms.sortOrder)),
   updatePlatform: protectedProcedure.input(z.object({ id: z.number(), url: z.string().optional(), enabled: z.boolean().optional(), reviewCount: z.number().optional(), targetCount: z.number().optional() })).mutation(async ({ input }) => {
     const { id, ...data } = input;
     const update: any = {};
@@ -185,11 +194,27 @@ const businessRouter = t.router({
     return { success: true };
   }),
   staff: protectedProcedure.input(z.object({ businessId: z.number() })).query(async ({ input }) => db.select().from(staff).where(eq(staff.businessId, input.businessId)).orderBy(desc(staff.reviews))),
+  getStaff: protectedProcedure.input(z.object({ businessId: z.number() })).query(async ({ input }) => db.select().from(staff).where(eq(staff.businessId, input.businessId)).orderBy(desc(staff.reviews))),
   addStaff: protectedProcedure.input(z.object({ businessId: z.number(), name: z.string() })).mutation(async ({ input }) => {
     const result = await db.insert(staff).values({ businessId: input.businessId, name: input.name }).returning();
     return result[0];
   }),
   leads: protectedProcedure.input(z.object({ businessId: z.number() })).query(async ({ input }) => db.select().from(leads).where(eq(leads.businessId, input.businessId)).orderBy(desc(leads.createdAt))),
+  recordStaffActivity: protectedProcedure.input(z.object({ id: z.number(), shares: z.number().optional(), reviews: z.number().optional() })).mutation(async ({ input }) => {
+    const update: any = {};
+    if (input.shares !== undefined) update.shares = input.shares;
+    if (input.reviews !== undefined) update.reviews = input.reviews;
+    await db.update(staff).set(update).where(eq(staff.id, input.id));
+    return { success: true };
+  }),
+  update: protectedProcedure.input(z.object({ id: z.number(), name: z.string().optional(), businessType: z.string().optional(), phone: z.string().optional(), email: z.string().optional(), ownerPin: z.string().optional(), tagline: z.string().optional(), keywords: z.array(z.string()).optional() })).mutation(async ({ input }) => {
+    const { id, ...data } = input;
+    const update: any = { ...data };
+    if (data.keywords) update.keywords = JSON.stringify(data.keywords);
+    await db.update(businesses).set(update).where(eq(businesses.id, id));
+    const biz = await db.select().from(businesses).where(eq(businesses.id, id)).limit(1);
+    return biz[0];
+  }),
   submitLead: publicProcedure.input(z.object({ businessId: z.number().optional(), name: z.string().optional(), email: z.string().optional(), phone: z.string().optional(), businessName: z.string().optional(), website: z.string().optional(), source: z.string().optional(), smsConsent: z.boolean().optional(), marketingConsent: z.boolean().optional() })).mutation(async ({ input }) => {
     await db.insert(leads).values(input);
     return { success: true };
