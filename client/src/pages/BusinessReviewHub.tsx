@@ -99,16 +99,41 @@ function ProgressBar({ platform }: { platform: ReviewPlatform }) {
 
 // ─── AI Review Helper ─────────────────────────────────────────
 const QUICK_TAGS = [
-  "Fast response", "Fair pricing", "Professional", "Friendly staff",
-  "Clean work", "On time", "Above & beyond", "Would recommend",
+  "Fast response", "Fair pricing", "Professional", "Friendly",
+  "Clean work", "On time", "Above & beyond", "Highly recommend",
   "Honest", "Knowledgeable", "Great communication", "Thorough",
 ];
+
+// Map tags to sentence-friendly phrases
+const TAG_PHRASES: Record<string, string[]> = {
+  "fast response": ["they responded quickly", "the response time was impressive", "they got back to me right away"],
+  "fair pricing": ["the pricing was very fair", "no surprises on the bill", "the price was honest and reasonable"],
+  "professional": ["completely professional", "professional from start to finish", "very professional throughout"],
+  "friendly": ["super friendly", "the team was really friendly", "friendly and welcoming"],
+  "clean work": ["left everything spotless", "the work area was cleaner than when they started", "very clean and tidy work"],
+  "on time": ["showed up right on time", "punctual and reliable", "arrived exactly when they said they would"],
+  "above & beyond": ["went above and beyond", "did more than I expected", "truly went the extra mile"],
+  "highly recommend": ["I would highly recommend them", "already recommending them to everyone I know", "can't recommend them enough"],
+  "honest": ["completely honest and upfront", "refreshingly honest", "no games, just honest work"],
+  "knowledgeable": ["clearly very knowledgeable", "really knew their stuff", "you could tell they're experts"],
+  "great communication": ["communication was excellent", "kept me informed every step of the way", "always easy to reach and responsive"],
+  "thorough": ["incredibly thorough", "didn't cut any corners", "very thorough and detail-oriented"],
+};
 
 function buildReviews(config: BusinessConfig, tags: string[]): string[] {
   const { businessName } = config;
   const pick = (arr: string[]) => arr[Math.floor(Math.random() * arr.length)];
   const shuffle = (arr: string[]) => [...arr].sort(() => Math.random() - 0.5);
-  const t = shuffle(tags.map(t => t.toLowerCase()));
+  
+  // Convert tags to natural phrases
+  const phrases = shuffle(tags.map(t => {
+    const key = t.toLowerCase();
+    return pick(TAG_PHRASES[key] || [`really ${key}`]);
+  }));
+  
+  const p1 = phrases[0] || "completely professional";
+  const p2 = phrases[1] || "honest and reliable";
+  const p3 = phrases[2] || "did quality work";
 
   const openers = [
     `Had an amazing experience with ${businessName}.`,
@@ -119,33 +144,46 @@ function buildReviews(config: BusinessConfig, tags: string[]): string[] {
     `Hands down the best experience I've had — ${businessName} delivered.`,
     `Five stars for ${businessName}, no question.`,
     `Just had ${businessName} out and I'm blown away.`,
+    `${businessName} exceeded all my expectations.`,
+    `I've finally found a company I can trust — ${businessName}.`,
   ];
 
   const middles = [
-    `They were ${t[0] || "professional"} and ${t[1] || "reliable"} the entire time.`,
-    `From start to finish, everything was ${t[0] || "smooth"} and ${t[1] || "professional"}.`,
-    `The team was ${t[0] || "great"} — you could tell they really know what they're doing.`,
-    `What stood out most was how ${t[0] || "professional"} they were. ${t[1] ? `Also really appreciated the ${t[1]}.` : ""}`,
-    `${t[0] ? t[0].charAt(0).toUpperCase() + t[0].slice(1) : "Great service"}, ${t[1] || "honest pricing"}, and ${t[2] || "quality work"} — that's rare to find all in one place.`,
-    `They showed up ${t.includes("on time") ? "right on time" : "when they said they would"}, did ${t[0] || "excellent"} work, and the price was ${t.includes("fair pricing") ? "very fair" : "reasonable"}.`,
-    `Communication was great and the results were ${t[0] || "impressive"}.`,
-    `They treated us like family — ${t[0] || "honest"} about everything and ${t[1] || "professional"} all the way through.`,
+    `They were ${p1} and ${p2} the entire time.`,
+    `From start to finish — ${p1}, ${p2}, and ${p3}.`,
+    `What stood out most was that ${p1}. On top of that, ${p2}.`,
+    `${p1.charAt(0).toUpperCase() + p1.slice(1)}, ${p2}, and ${p3} — that's rare to find all in one place.`,
+    `The whole experience was great — ${p1} and ${p2}. Can't ask for more than that.`,
+    `Two things really stood out: ${p1} and ${p2}.`,
+    `From the first call to the finished job, ${p1}. Also, ${p2}.`,
+    `Everything about it was solid — ${p1}, ${p2}, and the results speak for themselves.`,
   ];
 
   const closers = [
-    "Would definitely recommend to anyone.",
+    "I would absolutely recommend them to anyone.",
     "Already told my neighbors about them.",
-    "Will absolutely use them again.",
+    "Will definitely be using them again.",
     "Couldn't be happier with the results.",
     "They've earned a customer for life.",
     "If you're looking for quality, look no further.",
     "Trust me, give them a call — you won't regret it.",
     "This is how every company should operate.",
+    "They've set the bar for what good service looks like.",
+    "Worth every penny.",
   ];
 
   const reviews: string[] = [];
+  const usedOpeners = new Set<number>();
+  const usedMiddles = new Set<number>();
+  const usedClosers = new Set<number>();
+  
   for (let i = 0; i < 3; i++) {
-    reviews.push(`${pick(openers)} ${pick(middles)} ${pick(closers)}`);
+    let oi: number, mi: number, ci: number;
+    do { oi = Math.floor(Math.random() * openers.length); } while (usedOpeners.has(oi));
+    do { mi = Math.floor(Math.random() * middles.length); } while (usedMiddles.has(mi));
+    do { ci = Math.floor(Math.random() * closers.length); } while (usedClosers.has(ci));
+    usedOpeners.add(oi); usedMiddles.add(mi); usedClosers.add(ci);
+    reviews.push(`${openers[oi]} ${middles[mi]} ${closers[ci]}`);
   }
   return reviews;
 }
