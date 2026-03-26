@@ -246,8 +246,9 @@ function AIPromptSheet({ config, platform, onClose, onGoReview }: {
           {/* Step 3: Edit & Copy */}
           {step === "edit" && (
             <div className="px-5 pb-4">
-              <p className="text-base text-white/70 font-semibold mb-1">Make it your own!</p>
-              <p className="text-xs text-white/40 mb-3">Personalize it — add a detail, a name, or what made your experience special:</p>
+              <p className="text-xl text-white font-bold mb-2">✨ Make it your own!</p>
+              <p className="text-sm text-amber-300/90 font-medium mb-1">Is there anything you can add?</p>
+              <p className="text-sm text-white/60 mb-4 leading-relaxed">Please personalize your review — add any detail, name, or what made your experience a blessing to you. <span className="text-amber-400 font-semibold">Thank you so much! 🙏</span></p>
               <textarea
                 value={editText}
                 onChange={e => setEditText(e.target.value)}
