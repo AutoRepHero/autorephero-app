@@ -187,7 +187,7 @@ function AIPromptSheet({ config, platform, onClose, onGoReview }: {
             <Sparkles size={15} className="text-amber-400" />
             <span className="text-sm font-bold text-white tracking-wider"
               style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
-              {step === "tags" ? "WHAT MADE IT GREAT?" : step === "suggestions" ? "PICK A REVIEW" : "MAKE IT YOUR OWN"}
+              {step === "tags" ? "WHAT MADE IT GREAT?" : step === "suggestions" ? "SELECT A REVIEW" : "MAKE IT YOUR OWN"}
             </span>
           </div>
           <button onClick={onClose} className="text-white/30 hover:text-white/60 p-1 transition-colors">
@@ -199,7 +199,7 @@ function AIPromptSheet({ config, platform, onClose, onGoReview }: {
           {/* Step 1: Tag Selection */}
           {step === "tags" && (
             <div className="px-5 pb-4">
-              <p className="text-xs text-white/40 mb-3">Tap what applies to your experience:</p>
+              <p className="text-xs text-white/40 mb-3">Select what applies to your experience:</p>
               <div className="flex flex-wrap gap-2 mb-4">
                 {QUICK_TAGS.map(tag => (
                   <button key={tag} onClick={() => toggleTag(tag)}
@@ -225,7 +225,7 @@ function AIPromptSheet({ config, platform, onClose, onGoReview }: {
           {/* Step 2: AI Suggestions */}
           {step === "suggestions" && (
             <div className="px-5 pb-4">
-              <p className="text-xs text-white/40 mb-3">Tap one to use — you can edit it next:</p>
+              <p className="text-xs text-white/40 mb-3">Select the wording that resonates with you. Then you can edit to make it your own:</p>
               <div className="space-y-2 mb-4">
                 {reviews.map((review, i) => (
                   <button key={i} onClick={() => selectReview(review)}
