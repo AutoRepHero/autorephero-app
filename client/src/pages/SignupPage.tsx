@@ -53,7 +53,7 @@ export default function SignupPage() {
             <label className="block text-white/60 text-xs font-semibold tracking-widest mb-1.5 uppercase">Full Name</label>
             <input
               type="text"
-              placeholder="Chuck Norris"
+              placeholder="John Smith"
               className={inputClass}
               value={form.name}
               onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
