@@ -192,14 +192,14 @@ function AIPromptSheet({
         <div className="overflow-y-auto" style={{ maxHeight: "65vh" }}>
           {step === "tags" && (
             <div className="px-5 pb-4">
-              <p className="text-xs text-white/40 mb-3">Select what applies to your experience:</p>
+              <p className="text-xs text-white/75 mb-3">Select what applies to your experience:</p>
               <div className="flex flex-wrap gap-2 mb-4">
                 {QUICK_TAGS.map(tag => (
                   <button key={tag} onClick={() => toggleTag(tag)}
                     className="px-3 py-1.5 rounded-full text-xs font-medium transition-all"
                     style={{
                       background: selectedTags.includes(tag) ? "oklch(0.55 0.15 250)" : "oklch(0.18 0.02 255)",
-                      color: selectedTags.includes(tag) ? "#fff" : "rgba(255,255,255,0.5)",
+                      color: selectedTags.includes(tag) ? "#fff" : "rgba(255,255,255,0.75)",
                       border: selectedTags.includes(tag) ? "1px solid oklch(0.65 0.15 250)" : "1px solid oklch(0.25 0.04 255)",
                     }}>
                     {tag}
@@ -217,19 +217,19 @@ function AIPromptSheet({
 
           {step === "suggestions" && (
             <div className="px-5 pb-4">
-              <p className="text-xs text-white/40 mb-3">Select the wording that resonates with you. Then you can edit to make it your own:</p>
+              <p className="text-xs text-white/75 mb-3">Select the wording that resonates with you. Then you can edit to make it your own:</p>
               <div className="space-y-2 mb-4">
                 {reviews.map((review, i) => (
                   <button key={i} onClick={() => selectReview(review)}
                     className="w-full text-left p-4 rounded-xl border transition-all hover:border-blue-400/40"
                     style={{ background: "oklch(0.16 0.025 255)", borderColor: "oklch(0.25 0.04 255)" }}>
                     <div className="text-amber-400 text-xs mb-1.5">{"⭐".repeat(5)}</div>
-                    <span className="text-sm leading-relaxed text-white/80">{review}</span>
+                    <span className="text-sm leading-relaxed text-white/90">{review}</span>
                   </button>
                 ))}
               </div>
               <button onClick={() => setStep("tags")}
-                className="text-xs text-white/30 hover:text-white/50 transition-all w-full text-center py-2">
+                className="text-xs text-white/60 hover:text-white/80 transition-all w-full text-center py-2">
                 ← Back to tags
               </button>
             </div>
@@ -239,13 +239,13 @@ function AIPromptSheet({
             <div className="px-5 pb-4">
               <p className="text-xl text-white font-bold mb-2">✨ Make it your own!</p>
               <p className="text-sm text-amber-300/90 font-medium mb-1">Is there anything you can add?</p>
-              <p className="text-sm text-white/60 mb-4 leading-relaxed">Please personalize your review — add any detail, name, or what made your experience a blessing to you. <span className="text-amber-400 font-semibold">Thank you so much! 🙏</span></p>
+              <p className="text-sm text-white/80 mb-4 leading-relaxed">Please personalize your review — add any detail, name, or what made your experience a blessing to you. <span className="text-amber-400 font-semibold">Thank you so much! 🙏</span></p>
               <textarea value={editText} onChange={e => setEditText(e.target.value)} rows={5}
-                className="w-full p-4 rounded-xl text-sm leading-relaxed text-white/90 resize-none focus:outline-none focus:ring-1 focus:ring-blue-400/40"
+                className="w-full p-4 rounded-xl text-sm leading-relaxed text-white resize-none focus:outline-none focus:ring-1 focus:ring-blue-400/40"
                 style={{ background: "oklch(0.16 0.025 255)", border: "1px solid oklch(0.25 0.04 255)" }} />
               <div className="flex gap-2 mt-3">
                 <button onClick={() => setStep("suggestions")}
-                  className="flex-1 py-3 rounded-xl text-sm text-white/40 border border-white/10 hover:border-white/20 transition-all">
+                  className="flex-1 py-3 rounded-xl text-sm text-white/70 border border-white/20 hover:border-white/20 transition-all">
                   ← Go Back
                 </button>
                 <button onClick={copyAndGo}
