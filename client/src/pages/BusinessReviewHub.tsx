@@ -97,24 +97,56 @@ function ProgressBar({ platform }: { platform: ReviewPlatform }) {
   );
 }
 
-// ─── AI Prompt Sheet ──────────────────────────────────────────
+// ─── AI Review Helper ─────────────────────────────────────────
+const QUICK_TAGS = [
+  "Fast response", "Fair pricing", "Professional", "Friendly staff",
+  "Clean work", "On time", "Above & beyond", "Would recommend",
+  "Honest", "Knowledgeable", "Great communication", "Thorough",
+];
+
+function buildReviews(config: BusinessConfig, tags: string[]): string[] {
+  const { businessName } = config;
+  const tagStr = tags.join(", ").toLowerCase();
+  const t1 = tags[0] || "great service";
+  const t2 = tags[1] || "professional";
+  const t3 = tags[2] || "reliable";
+
+  return [
+    `Had an excellent experience with ${businessName}. They were ${t1.toLowerCase()} and ${t2.toLowerCase()} from start to finish. Would definitely recommend to anyone looking for quality work.`,
+    `${businessName} really impressed me — ${t1.toLowerCase()}, ${t2.toLowerCase()}, and ${t3.toLowerCase()}. You can tell they care about doing things right. Five stars all the way.`,
+    `So glad I went with ${businessName}. The whole experience was smooth — ${tagStr}. They earned a customer for life.`,
+  ];
+}
+
 function AIPromptSheet({ config, platform, onClose, onGoReview }: {
   config: BusinessConfig; platform: ReviewPlatform; onClose: () => void; onGoReview: () => void;
 }) {
-  const prompts = generateAIPrompts(config, platform.shortName);
-  const [selected, setSelected] = useState<number | null>(null);
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [editText, setEditText] = useState("");
+  const [step, setStep] = useState<"tags" | "suggestions" | "edit">("tags");
 
-  function copyPrompt(text: string, idx: number) {
-    navigator.clipboard.writeText(text).catch(() => {});
-    toast.success("Copied! Paste it into your review.", { duration: 2500 });
-    setSelected(idx);
+  function toggleTag(tag: string) {
+    setSelectedTags(prev => prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag]);
+  }
+
+  const reviews = buildReviews(config, selectedTags.length > 0 ? selectedTags : ["great service", "professional"]);
+
+  function selectReview(text: string) {
+    setEditText(text);
+    setStep("edit");
+  }
+
+  function copyAndGo() {
+    navigator.clipboard.writeText(editText).catch(() => {});
+    toast.success("Copied! Opening " + platform.shortName + "...", { duration: 2000 });
+    setTimeout(() => onGoReview(), 500);
   }
 
   return (
     <div className="fixed inset-0 z-50 flex flex-col justify-end">
       <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} />
       <div className="relative animate-slide-up rounded-t-2xl overflow-hidden"
-        style={{ background: "oklch(0.13 0.025 255)", border: "1px solid oklch(0.25 0.04 255)" }}>
+        style={{ background: "oklch(0.13 0.025 255)", border: "1px solid oklch(0.25 0.04 255)", maxHeight: "85vh" }}>
         <div className="flex justify-center pt-3 pb-1">
           <div className="w-10 h-1 rounded-full bg-white/20" />
         </div>
@@ -122,37 +154,88 @@ function AIPromptSheet({ config, platform, onClose, onGoReview }: {
           <div className="flex items-center gap-2">
             <Sparkles size={15} className="text-amber-400" />
             <span className="text-sm font-bold text-white tracking-wider"
-              style={{ fontFamily: "'Space Grotesk', sans-serif" }}>AI REVIEW STARTERS</span>
+              style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+              {step === "tags" ? "WHAT MADE IT GREAT?" : step === "suggestions" ? "PICK A REVIEW" : "MAKE IT YOURS"}
+            </span>
           </div>
           <button onClick={onClose} className="text-white/30 hover:text-white/60 p-1 transition-colors">
             <X size={18} />
           </button>
         </div>
-        <p className="px-5 text-xs text-white/40 mb-3">
-          Tap a starter to copy it, then paste into your {platform.shortName} review.
-        </p>
-        <div className="px-5 space-y-2 max-h-56 overflow-y-auto pb-2">
-          {prompts.map((prompt: string, i: number) => (
-            <button key={i} onClick={() => copyPrompt(prompt, i)}
-              className="w-full text-left p-3 rounded-lg border transition-all"
-              style={{
-                background: selected === i ? "oklch(0.75 0.15 80 / 0.1)" : "oklch(0.16 0.025 255)",
-                borderColor: selected === i ? "oklch(0.75 0.15 80 / 0.4)" : "oklch(0.25 0.04 255)",
-              }}>
-              <div className="flex items-start gap-2">
-                <Copy size={12} className={`mt-0.5 flex-shrink-0 ${selected === i ? "text-amber-400" : "text-white/25"}`} />
-                <span className="text-xs leading-relaxed text-white/75">{prompt}</span>
+
+        <div className="overflow-y-auto" style={{ maxHeight: "65vh" }}>
+          {/* Step 1: Tag Selection */}
+          {step === "tags" && (
+            <div className="px-5 pb-4">
+              <p className="text-xs text-white/40 mb-3">Tap what applies to your experience:</p>
+              <div className="flex flex-wrap gap-2 mb-4">
+                {QUICK_TAGS.map(tag => (
+                  <button key={tag} onClick={() => toggleTag(tag)}
+                    className="px-3 py-1.5 rounded-full text-xs font-medium transition-all"
+                    style={{
+                      background: selectedTags.includes(tag) ? "oklch(0.55 0.15 250)" : "oklch(0.18 0.02 255)",
+                      color: selectedTags.includes(tag) ? "#fff" : "rgba(255,255,255,0.5)",
+                      border: selectedTags.includes(tag) ? "1px solid oklch(0.65 0.15 250)" : "1px solid oklch(0.25 0.04 255)",
+                    }}>
+                    {tag}
+                  </button>
+                ))}
               </div>
-            </button>
-          ))}
-        </div>
-        <div className="px-5 py-4 mt-1">
-          <button onClick={onGoReview}
-            className="btn-electric w-full py-3.5 rounded-xl flex items-center justify-center gap-2 text-sm font-bold tracking-wider"
-            style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
-            <ExternalLink size={15} />
-            OPEN {platform.shortName.toUpperCase()} REVIEW
-          </button>
+              <button onClick={() => setStep("suggestions")}
+                className="btn-electric w-full py-3 rounded-xl flex items-center justify-center gap-2 text-sm font-bold tracking-wider"
+                style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+                <Sparkles size={14} />
+                GENERATE REVIEWS {selectedTags.length > 0 && `(${selectedTags.length} selected)`}
+              </button>
+            </div>
+          )}
+
+          {/* Step 2: AI Suggestions */}
+          {step === "suggestions" && (
+            <div className="px-5 pb-4">
+              <p className="text-xs text-white/40 mb-3">Tap one to use — you can edit it next:</p>
+              <div className="space-y-2 mb-4">
+                {reviews.map((review, i) => (
+                  <button key={i} onClick={() => selectReview(review)}
+                    className="w-full text-left p-4 rounded-xl border transition-all hover:border-blue-400/40"
+                    style={{ background: "oklch(0.16 0.025 255)", borderColor: "oklch(0.25 0.04 255)" }}>
+                    <div className="text-amber-400 text-xs mb-1.5">{"⭐".repeat(5)}</div>
+                    <span className="text-sm leading-relaxed text-white/80">{review}</span>
+                  </button>
+                ))}
+              </div>
+              <button onClick={() => setStep("tags")}
+                className="text-xs text-white/30 hover:text-white/50 transition-all w-full text-center py-2">
+                ← Back to tags
+              </button>
+            </div>
+          )}
+
+          {/* Step 3: Edit & Copy */}
+          {step === "edit" && (
+            <div className="px-5 pb-4">
+              <p className="text-xs text-white/40 mb-2">Add a personal detail or two to make it yours:</p>
+              <textarea
+                value={editText}
+                onChange={e => setEditText(e.target.value)}
+                rows={5}
+                className="w-full p-4 rounded-xl text-sm leading-relaxed text-white/90 resize-none focus:outline-none focus:ring-1 focus:ring-blue-400/40"
+                style={{ background: "oklch(0.16 0.025 255)", border: "1px solid oklch(0.25 0.04 255)" }}
+              />
+              <div className="flex gap-2 mt-3">
+                <button onClick={() => setStep("suggestions")}
+                  className="flex-1 py-3 rounded-xl text-sm text-white/40 border border-white/10 hover:border-white/20 transition-all">
+                  ← Pick Another
+                </button>
+                <button onClick={copyAndGo}
+                  className="btn-electric flex-[2] py-3 rounded-xl flex items-center justify-center gap-2 text-sm font-bold tracking-wider"
+                  style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+                  <Copy size={14} />
+                  COPY & GO TO {platform.shortName.toUpperCase()}
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
