@@ -106,16 +106,48 @@ const QUICK_TAGS = [
 
 function buildReviews(config: BusinessConfig, tags: string[]): string[] {
   const { businessName } = config;
-  const tagStr = tags.join(", ").toLowerCase();
-  const t1 = tags[0] || "great service";
-  const t2 = tags[1] || "professional";
-  const t3 = tags[2] || "reliable";
+  const pick = (arr: string[]) => arr[Math.floor(Math.random() * arr.length)];
+  const shuffle = (arr: string[]) => [...arr].sort(() => Math.random() - 0.5);
+  const t = shuffle(tags.map(t => t.toLowerCase()));
 
-  return [
-    `Had an excellent experience with ${businessName}. They were ${t1.toLowerCase()} and ${t2.toLowerCase()} from start to finish. Would definitely recommend to anyone looking for quality work.`,
-    `${businessName} really impressed me — ${t1.toLowerCase()}, ${t2.toLowerCase()}, and ${t3.toLowerCase()}. You can tell they care about doing things right. Five stars all the way.`,
-    `So glad I went with ${businessName}. The whole experience was smooth — ${tagStr}. They earned a customer for life.`,
+  const openers = [
+    `Had an amazing experience with ${businessName}.`,
+    `Really impressed with ${businessName}.`,
+    `Can't say enough good things about ${businessName}.`,
+    `${businessName} knocked it out of the park.`,
+    `So glad I chose ${businessName}.`,
+    `Hands down the best experience I've had — ${businessName} delivered.`,
+    `Five stars for ${businessName}, no question.`,
+    `Just had ${businessName} out and I'm blown away.`,
   ];
+
+  const middles = [
+    `They were ${t[0] || "professional"} and ${t[1] || "reliable"} the entire time.`,
+    `From start to finish, everything was ${t[0] || "smooth"} and ${t[1] || "professional"}.`,
+    `The team was ${t[0] || "great"} — you could tell they really know what they're doing.`,
+    `What stood out most was how ${t[0] || "professional"} they were. ${t[1] ? `Also really appreciated the ${t[1]}.` : ""}`,
+    `${t[0] ? t[0].charAt(0).toUpperCase() + t[0].slice(1) : "Great service"}, ${t[1] || "honest pricing"}, and ${t[2] || "quality work"} — that's rare to find all in one place.`,
+    `They showed up ${t.includes("on time") ? "right on time" : "when they said they would"}, did ${t[0] || "excellent"} work, and the price was ${t.includes("fair pricing") ? "very fair" : "reasonable"}.`,
+    `Communication was great and the results were ${t[0] || "impressive"}.`,
+    `They treated us like family — ${t[0] || "honest"} about everything and ${t[1] || "professional"} all the way through.`,
+  ];
+
+  const closers = [
+    "Would definitely recommend to anyone.",
+    "Already told my neighbors about them.",
+    "Will absolutely use them again.",
+    "Couldn't be happier with the results.",
+    "They've earned a customer for life.",
+    "If you're looking for quality, look no further.",
+    "Trust me, give them a call — you won't regret it.",
+    "This is how every company should operate.",
+  ];
+
+  const reviews: string[] = [];
+  for (let i = 0; i < 3; i++) {
+    reviews.push(`${pick(openers)} ${pick(middles)} ${pick(closers)}`);
+  }
+  return reviews;
 }
 
 function AIPromptSheet({ config, platform, onClose, onGoReview }: {
@@ -155,7 +187,7 @@ function AIPromptSheet({ config, platform, onClose, onGoReview }: {
             <Sparkles size={15} className="text-amber-400" />
             <span className="text-sm font-bold text-white tracking-wider"
               style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
-              {step === "tags" ? "WHAT MADE IT GREAT?" : step === "suggestions" ? "PICK A REVIEW" : "MAKE IT YOURS"}
+              {step === "tags" ? "WHAT MADE IT GREAT?" : step === "suggestions" ? "PICK A REVIEW" : "MAKE IT YOUR OWN"}
             </span>
           </div>
           <button onClick={onClose} className="text-white/30 hover:text-white/60 p-1 transition-colors">
@@ -185,7 +217,7 @@ function AIPromptSheet({ config, platform, onClose, onGoReview }: {
                 className="btn-electric w-full py-3 rounded-xl flex items-center justify-center gap-2 text-sm font-bold tracking-wider"
                 style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
                 <Sparkles size={14} />
-                GENERATE REVIEWS {selectedTags.length > 0 && `(${selectedTags.length} selected)`}
+                GENERATE REVIEW SUGGESTIONS {selectedTags.length > 0 && `(${selectedTags.length} selected)`}
               </button>
             </div>
           )}
@@ -214,7 +246,8 @@ function AIPromptSheet({ config, platform, onClose, onGoReview }: {
           {/* Step 3: Edit & Copy */}
           {step === "edit" && (
             <div className="px-5 pb-4">
-              <p className="text-xs text-white/40 mb-2">Add a personal detail or two to make it yours:</p>
+              <p className="text-base text-white/70 font-semibold mb-1">Make it your own!</p>
+              <p className="text-xs text-white/40 mb-3">Personalize it — add a detail, a name, or what made your experience special:</p>
               <textarea
                 value={editText}
                 onChange={e => setEditText(e.target.value)}
@@ -225,7 +258,7 @@ function AIPromptSheet({ config, platform, onClose, onGoReview }: {
               <div className="flex gap-2 mt-3">
                 <button onClick={() => setStep("suggestions")}
                   className="flex-1 py-3 rounded-xl text-sm text-white/40 border border-white/10 hover:border-white/20 transition-all">
-                  ← Pick Another
+                  ← Go Back
                 </button>
                 <button onClick={copyAndGo}
                   className="btn-electric flex-[2] py-3 rounded-xl flex items-center justify-center gap-2 text-sm font-bold tracking-wider"
