@@ -256,7 +256,7 @@ function AIPromptSheet({
 
           {step === "suggestions" && (
             <div className="px-5 pb-4">
-              <p className="text-xs text-white/75 mb-3">Select the wording that resonates with you. Then you can edit to make it your own:</p>
+              <p className="text-sm text-white font-medium sticky top-0 z-10 py-2 mb-2" style={{ background: "oklch(0.13 0.025 255)" }}>Select the wording that resonates with you. Then you can edit to make it your own:</p>
               <div className="space-y-2 mb-4">
                 {reviews.map((review, i) => (
                   <button key={i} onClick={() => selectReview(review)}
