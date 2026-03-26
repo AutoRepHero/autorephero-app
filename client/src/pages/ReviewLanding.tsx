@@ -249,7 +249,7 @@ function AIPromptSheet({
                 className="btn-electric w-full py-3 rounded-xl flex flex-col items-center justify-center text-sm font-bold tracking-wider"
                 style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
                 
-                <span>GENERATE REVIEW SUGGESTIONS</span>{selectedTags.length > 0 && <span className="block text-xs opacity-75 mt-0.5">({selectedTags.length} selected)</span>}
+                <span>✨ GENERATE REVIEW SUGGESTIONS</span>{selectedTags.length > 0 && <span className="block text-xs opacity-75 mt-0.5">({selectedTags.length} selected)</span>}
               </button>
             </div>
           )}
