@@ -246,9 +246,9 @@ function AIPromptSheet({
                 ))}
               </div>
               <button onClick={() => setStep("suggestions")}
-                className="btn-electric w-full py-3 rounded-xl flex items-center justify-center gap-2 text-sm font-bold tracking-wider"
+                className="btn-electric w-full py-3 rounded-xl flex flex-col items-center justify-center text-sm font-bold tracking-wider"
                 style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
-                <Sparkles size={14} />
+                
                 <span>GENERATE REVIEW SUGGESTIONS</span>{selectedTags.length > 0 && <span className="block text-xs opacity-75 mt-0.5">({selectedTags.length} selected)</span>}
               </button>
             </div>
@@ -344,7 +344,7 @@ function QRSheet({ url, onClose }: { url: string; onClose: () => void }) {
           {navigator.share && (
             <button
               onClick={() => navigator.share({ title: "Leave Us a Review", url }).catch(() => {})}
-              className="btn-electric w-full py-3 rounded-xl flex items-center justify-center gap-2 text-sm font-bold tracking-wider"
+              className="btn-electric w-full py-3 rounded-xl flex flex-col items-center justify-center text-sm font-bold tracking-wider"
               style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
               <Share2 size={14} />
               SHARE VIA PHONE
