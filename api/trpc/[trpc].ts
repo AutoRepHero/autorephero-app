@@ -184,14 +184,21 @@ const businessRouter = t.router({
   }),
   platforms: protectedProcedure.input(z.object({ businessId: z.number() })).query(async ({ input }) => db.select().from(platforms).where(eq(platforms.businessId, input.businessId)).orderBy(platforms.sortOrder)),
   getPlatforms: protectedProcedure.input(z.object({ businessId: z.number() })).query(async ({ input }) => db.select().from(platforms).where(eq(platforms.businessId, input.businessId)).orderBy(platforms.sortOrder)),
-  updatePlatform: protectedProcedure.input(z.object({ id: z.number(), url: z.string().optional(), enabled: z.boolean().optional(), reviewCount: z.number().optional(), targetCount: z.number().optional() })).mutation(async ({ input }) => {
+  updatePlatform: protectedProcedure.input(z.object({ id: z.number(), url: z.string().optional(), enabled: z.boolean().optional(), reviewCount: z.number().optional(), targetCount: z.number().optional(), sortOrder: z.number().optional() })).mutation(async ({ input }) => {
     const { id, ...data } = input;
     const update: any = {};
     if (data.url !== undefined) update.url = data.url;
     if (data.enabled !== undefined) update.enabled = data.enabled;
     if (data.reviewCount !== undefined) update.reviewCount = data.reviewCount;
     if (data.targetCount !== undefined) update.targetCount = data.targetCount;
+    if (data.sortOrder !== undefined) update.sortOrder = data.sortOrder;
     await db.update(platforms).set(update).where(eq(platforms.id, id));
+    return { success: true };
+  }),
+  reorderPlatforms: protectedProcedure.input(z.object({ platformIds: z.array(z.number()) })).mutation(async ({ input }) => {
+    for (let i = 0; i < input.platformIds.length; i++) {
+      await db.update(platforms).set({ sortOrder: i + 1 }).where(eq(platforms.id, input.platformIds[i]));
+    }
     return { success: true };
   }),
   staff: protectedProcedure.input(z.object({ businessId: z.number() })).query(async ({ input }) => db.select().from(staff).where(eq(staff.businessId, input.businessId)).orderBy(desc(staff.reviews))),

@@ -143,6 +143,23 @@ export default function OwnerDashboard() {
     { enabled: !!selectedBizId }
   );
 
+  const reorderPlatforms = trpc.business.reorderPlatforms.useMutation({
+    onSuccess: () => platformsQuery.refetch(),
+  });
+
+  function movePlatform(platformId: number, direction: 'up' | 'down') {
+    const plats = platformsQuery.data;
+    if (!plats) return;
+    const idx = plats.findIndex(p => p.id === platformId);
+    if (idx < 0) return;
+    if (direction === 'up' && idx === 0) return;
+    if (direction === 'down' && idx === plats.length - 1) return;
+    const newOrder = [...plats];
+    const swapIdx = direction === 'up' ? idx - 1 : idx + 1;
+    [newOrder[idx], newOrder[swapIdx]] = [newOrder[swapIdx], newOrder[idx]];
+    reorderPlatforms.mutate({ platformIds: newOrder.map(p => p.id) });
+  }
+
   const updatePlatform = trpc.business.updatePlatform.useMutation({
     onSuccess: () => platformsQuery.refetch(),
     onError: (e) => toast.error(e.message),
@@ -373,11 +390,15 @@ export default function OwnerDashboard() {
                           <div className="text-white/30 text-xs">{p.reviewCount} / {p.targetCount} reviews</div>
                         </div>
                         {!locked && (
-                          <button
-                            onClick={() => updatePlatform.mutate({ businessId: selectedBizId!, platformId: p.platformId, enabled: !p.enabled })}
-                            className="text-white/60 hover:text-white transition-colors">
-                            {p.enabled ? <ToggleRight size={24} style={{ color: "oklch(0.7 0.22 240)" }} /> : <ToggleLeft size={24} />}
-                          </button>
+                          <div className="flex items-center gap-1">
+                            <button onClick={() => movePlatform(p.id, 'up')} className="text-white/30 hover:text-white/70 p-1 transition-colors" title="Move up">▲</button>
+                            <button onClick={() => movePlatform(p.id, 'down')} className="text-white/30 hover:text-white/70 p-1 transition-colors" title="Move down">▼</button>
+                            <button
+                              onClick={() => updatePlatform.mutate({ businessId: selectedBizId!, platformId: p.platformId, enabled: !p.enabled })}
+                              className="text-white/60 hover:text-white transition-colors">
+                              {p.enabled ? <ToggleRight size={24} style={{ color: "oklch(0.7 0.22 240)" }} /> : <ToggleLeft size={24} />}
+                            </button>
+                          </div>
                         )}
                       </div>
                       {!locked && p.enabled && (
